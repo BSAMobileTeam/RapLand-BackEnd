@@ -1,0 +1,24 @@
+{
+  "name": "rapjeubackend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BSAMobileTeam/RapJeuBackEnd.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BSAMobileTeam/RapJeuBackEnd/issues"
+  },
+  "homepage": "https://github.com/BSAMobileTeam/RapJeuBackEnd#readme"
+}
