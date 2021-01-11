@@ -7,6 +7,11 @@ const Question = require('../models/question')
 
 const create = async (req, res) => {
     try {
+        /*const questions = await (await Question.findAll()).map(question => {
+            delete question.id
+            return question
+        })*/
+
         const newQuestion = await Question.create(req.body)
         res.status(201).json(newQuestion)
     } catch (error) {
@@ -76,6 +81,16 @@ const createWithArray = async (req, res) => {
         return res.status(201).json(array)
     } catch (error) {
         res.sendStatus(401)
+    }
+}
+
+const deleteById = async (req, res) => {
+    try {
+        Question.deleteById(req.query.id)
+        res.status(204)
+    } catch (error) {
+        res.sendStatus(400)
+        //res.sendStatus(403) token auth
     }
 }
 
