@@ -7,13 +7,20 @@ const Question = require('../models/question')
 
 const create = async (req, res) => {
     try {
-        /*const questions = await (await Question.findAll()).map(question => {
+        const questions = await (await Question.findAll()).map(question => {
             delete question.id
+	    delete question.createdAt
+	    delete question.updatedAt
             return question
-        })*/
-
-        const newQuestion = await Question.create(req.body)
-        res.status(201).json(newQuestion)
+        })
+	console.log(req.body.title)
+	console.log(questions)
+	if(!(req.body in questions)){
+		const newQuestion = await Question.create(req.body)
+		res.status(201).json(newQuestion)
+	} else {
+		res.sendStatus(401).send('Duplicate')
+	}
     } catch (error) {
         res.sendStatus(401)
     }
