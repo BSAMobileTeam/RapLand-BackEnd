@@ -12,7 +12,7 @@ module.exports = app => {
 
     router.get('/getMixedArray', controller.getMixedArray)
 
-    
+    router.post('/createWithArray', controller.createWithArray)
 
     app.use('/question', router)
 }

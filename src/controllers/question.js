@@ -1,5 +1,10 @@
 const Question = require('../models/question')
 
+/**
+ * for create and create withArray
+ * check if question does not already exists
+ */
+
 const create = async (req, res) => {
     try {
         const newQuestion = await Question.create(req.body)
@@ -47,9 +52,30 @@ const getMixedArray = async (req, res) => {
                 }
             }
         }, 3000)
-        res.sendStatus(200).json(mixedArray)
+        res.status(200).json(mixedArray)
     } catch (error) {
         res.sendStatus(404)
+    }
+}
+
+const createWithArray = async (req, res) => {
+    try {
+        const array = []
+        const questions = await (await Question.findAll()).map(question => {
+            delete question.id
+            return question
+        })
+        
+        for (const question of req.body) {
+            await sequelize.transaction(async tran => {
+                if (!(question in  questions)) {
+                    array.push(await Question.create(question, { transaction: tran }))
+                }
+            })
+        }
+        return res.status(201).json(array)
+    } catch (error) {
+        res.sendStatus(401)
     }
 }
 
@@ -57,5 +83,6 @@ module.exports = {
     create,
     getById,
     getAll,
-    getMixedArray
+    getMixedArray,
+    createWithArray
 }
