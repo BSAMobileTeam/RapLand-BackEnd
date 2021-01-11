@@ -86,8 +86,10 @@ const createWithArray = async (req, res) => {
 
 const deleteById = async (req, res) => {
     try {
-        Question.deleteById(req.query.id)
-        res.status(204)
+	console.log(req.query.id)
+        const question = await Question.findByPk(req.query.id)
+	await question.destroy()
+        res.status(200).send('Deleted')
     } catch (error) {
         res.sendStatus(400)
         //res.sendStatus(403) token auth
