@@ -16,7 +16,7 @@ const create = async (req, res) => {
 
 const getById = async (req, res) => {
     try {
-        const question = await Question.findByPk(req.params.id)
+        const question = await Question.findByPk(req.query.id)
         res.status(200).json(question)
     } catch (error) {
         res.sendStatus(404)
