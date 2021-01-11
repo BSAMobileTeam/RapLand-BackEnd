@@ -9,30 +9,34 @@ const Question = sequelize.define('question', {
         defaultValue: DataTypes.UUIDV4
     },
     game: {
-        type: DataTypes.ARRAY(DataTypes.STRING)
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: false
     },
     gameMode: {
-        type: DataTypes.ARRAY(DataTypes.STRING)
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: false
     },
     type: {
         type: DataTypes.STRING,
+        allowNull: false
     },
     title: {
         type: DataTypes.STRING,
+        allowNull: false
     },
     choices: {
-        type: DataTypes.ARRAY(DataTypes.STRING)
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: false,
     },
     answer: {
-        type: DataTypes.ARRAY(DataTypes.STRING)
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: false,
     },
     mediaType: {
         type: DataTypes.STRING,
-        allowNull: true
     },
     mediaUrl: {
         type: DataTypes.STRING,
-        allowNull: true
     }
 })
 

@@ -2,9 +2,12 @@ const Question = require('../models/question')
 
 const create = async (req, res) => {
     try {
-        await Question.create(req.body)   
+        console.log("BODY = ", req.body)
+        const newQuestion = await Question.create(req.body)
+        res.status(201).json(newQuestion)
     } catch (error) {
-        res.status(error.status)
+        console.error(error.message)
+        res.sendStatus(401)
     }
 }
 
