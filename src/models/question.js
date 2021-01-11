@@ -28,7 +28,7 @@ const Question = sequelize.define('question', {
         type: DataTypes.ARRAY(DataTypes.STRING),
         allowNull: false,
     },
-    answer: {
+    answers: {
         type: DataTypes.ARRAY(DataTypes.STRING),
         allowNull: false,
     },
