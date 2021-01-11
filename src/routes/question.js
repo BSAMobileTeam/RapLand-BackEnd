@@ -10,4 +10,6 @@ module.exports = app => {
     router.get('/getById', controller.getById)
 
     router.get('/getAll', controller.getAll)
+
+    app.use('/question', router)
 }

@@ -4,7 +4,7 @@ const { DataTypes } = require('sequelize')
 
 const Question = sequelize.define('question', {
     id: {
-        type: DataTypes.UUIDV4,
+        type: DataTypes.UUID,
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4
     },
