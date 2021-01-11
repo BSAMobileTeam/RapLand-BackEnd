@@ -14,5 +14,7 @@ module.exports = app => {
 
     router.post('/createWithArray', controller.createWithArray)
 
+    router.delete('/deleteById', controller.deleteById)
+
     app.use('/question', router)
 }

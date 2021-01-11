@@ -99,5 +99,6 @@ module.exports = {
     getById,
     getAll,
     getMixedArray,
-    createWithArray
+    createWithArray,
+    deleteById
 }
