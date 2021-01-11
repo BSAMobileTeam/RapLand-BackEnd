@@ -10,5 +10,9 @@ module.exports = app => {
 
     router.get('/getAll', controller.getAll)
 
+    router.get('/getMixedArray', controller.getMixedArray)
+
+    
+
     app.use('/question', router)
 }
