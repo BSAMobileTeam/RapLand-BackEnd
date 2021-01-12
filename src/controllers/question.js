@@ -23,7 +23,7 @@ const getById = async (req, res) => {
     }
 }
 
-const getAll = async (req, res) => {    
+const getAll = async (req, res) => {
     try {
         const questions = await Question.findAll()
         res.status(200).json(questions)
