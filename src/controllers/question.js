@@ -7,8 +7,20 @@ const Question = require('../models/question')
 
 const create = async (req, res) => {
     try {
-        const newQuestion = await Question.create(req.body)
-        res.status(201).json(newQuestion)
+        const questions = await (await Question.findAll()).map(question => {
+            delete question.id
+	    delete question.createdAt
+	    delete question.updatedAt
+            return question
+        })
+	console.log(req.body.title)
+	console.log(questions)
+	if(!(req.body in questions)){
+		const newQuestion = await Question.create(req.body)
+		res.status(201).json(newQuestion)
+	} else {
+		res.sendStatus(401).send('Duplicate')
+	}
     } catch (error) {
         res.sendStatus(401)
     }
@@ -16,7 +28,7 @@ const create = async (req, res) => {
 
 const getById = async (req, res) => {
     try {
-        const question = await Question.findByPk(req.params.id)
+        const question = await Question.findByPk(req.query.id)
         res.status(200).json(question)
     } catch (error) {
         res.sendStatus(404)
@@ -79,10 +91,23 @@ const createWithArray = async (req, res) => {
     }
 }
 
+const deleteById = async (req, res) => {
+    try {
+	console.log(req.query.id)
+        const question = await Question.findByPk(req.query.id)
+	await question.destroy()
+        res.status(200).send('Deleted')
+    } catch (error) {
+        res.sendStatus(400)
+        //res.sendStatus(403) token auth
+    }
+}
+
 module.exports = {
     create,
     getById,
     getAll,
     getMixedArray,
-    createWithArray
+    createWithArray,
+    deleteById
 }
