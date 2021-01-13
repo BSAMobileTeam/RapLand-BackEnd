@@ -120,6 +120,18 @@ const getCount = async (req, res) => {
     }
 }
 
+const updateQuestion = async (req, res) => {
+    try {
+	const question = await Question.findByPk(req.query.id)
+	await question.update(req.body, {
+	    where: { id: req.query.id }
+	})
+	res.status(200).send(req.body)
+    } catch {
+	res.sendStatus(404)
+    }
+}
+
 module.exports = {
     apiKeyCheck,
     create,
@@ -127,6 +139,7 @@ module.exports = {
     getAll,
     getCount,
     getMixedArray,
+    updateQuestion,
     createWithArray,
     deleteById
 }

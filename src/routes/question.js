@@ -12,6 +12,8 @@ module.exports = app => {
 
     router.get('/count', controller.getCount)
 
+    router.post('/updateQuestion', [controller.apiKeyCheck, controller.updateQuestion])
+
     router.post('/create', [controller.apiKeyCheck, controller.create])
 
     router.post('/createWithArray', [controller.apiKeyCheck, controller.createWithArray])
