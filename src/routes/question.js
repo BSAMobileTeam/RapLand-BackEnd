@@ -4,6 +4,8 @@ module.exports = app => {
     const controller = require('../controllers/question')
     const router = require('express').Router()
 
+    router.get('/ping', controller.ping)
+
     router.get('/getById', controller.getById)
 
     router.get('/getAll', controller.getAll)

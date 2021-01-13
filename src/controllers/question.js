@@ -1,7 +1,7 @@
 require('dotenv').config()
 const Question = require('../models/question')
 
-const {API_KEY} = process.env
+const {API_KEY, VERSION="1.0.1"} = process.env
 
 const apiKeyCheck = (req, res, next) => {
 	if(req.query.apiKey == API_KEY)
@@ -132,6 +132,16 @@ const updateQuestion = async (req, res) => {
     }
 }
 
+const ping = (req, res) => {
+    try {
+	res.status(200).json({
+	    "version": VERSION
+	})
+    } catch {
+	res.sendStatus(500)
+    }
+}
+
 module.exports = {
     apiKeyCheck,
     create,
@@ -141,5 +151,6 @@ module.exports = {
     getMixedArray,
     updateQuestion,
     createWithArray,
-    deleteById
+    deleteById,
+    ping
 }
