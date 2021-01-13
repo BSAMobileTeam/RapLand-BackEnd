@@ -20,18 +20,18 @@ const create = async (req, res) => {
     try {
         const questions = await (await Question.findAll()).map(question => {
             delete question.id
-	    delete question.createdAt
-	    delete question.updatedAt
+            delete question.createdAt
+            delete question.updatedAt
             return question
         })
-	console.log(req.body.title)
-	console.log(questions)
-	if(!(req.body in questions)){
-		const newQuestion = await Question.create(req.body)
-		res.status(201).json(newQuestion)
-	} else {
-		res.sendStatus(401).send('Duplicate')
-	}
+        console.log(req.body.title)
+        console.log(questions)
+        if(!(req.body in questions)){
+            const newQuestion = await Question.create(req.body)
+            res.status(201).json(newQuestion)
+        } else {
+            res.sendStatus(401).send('Duplicate')
+        }
     } catch (error) {
         res.sendStatus(401)
     }
@@ -54,7 +54,6 @@ const getAll = async (req, res) => {
         res.sendStatus(404)
     }
 }
-
 
 /***
  *
@@ -105,10 +104,19 @@ const createWithArray = async (req, res) => {
 const deleteById = async (req, res) => {
     try {
         const question = await Question.findByPk(req.query.id)
-	await question.destroy()
+	    await question.destroy()
         res.status(200).send('Deleted')
     } catch (error) {
         res.sendStatus(400)
+    }
+}
+
+const getCount = async (req, res) => {
+    try {
+        const questions = await Question.findAll()
+        res.status(200).send(questions.length())
+    } catch (error) {
+        res.sendStatus(500)
     }
 }
 
@@ -117,6 +125,7 @@ module.exports = {
     create,
     getById,
     getAll,
+    getCount,
     getMixedArray,
     createWithArray,
     deleteById
