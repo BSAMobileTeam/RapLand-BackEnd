@@ -1,15 +1,4 @@
-require('dotenv').config()
 const Question = require('../models/question')
-
-const {API_KEY} = process.env
-
-const apiKeyCheck = (req, res, next) => {
-	if(req.query.apiKey == API_KEY)
-		next()
-	else {
-		res.sendStatus(401)
-	}
-}
 
 /**
  * for create and create withArray
@@ -18,20 +7,13 @@ const apiKeyCheck = (req, res, next) => {
 
 const create = async (req, res) => {
     try {
-        const questions = await (await Question.findAll()).map(question => {
+        /*const questions = await (await Question.findAll()).map(question => {
             delete question.id
-	    delete question.createdAt
-	    delete question.updatedAt
             return question
-        })
-	console.log(req.body.title)
-	console.log(questions)
-	if(!(req.body in questions)){
-		const newQuestion = await Question.create(req.body)
-		res.status(201).json(newQuestion)
-	} else {
-		res.sendStatus(401).send('Duplicate')
-	}
+        })*/
+
+        const newQuestion = await Question.create(req.body)
+        res.status(201).json(newQuestion)
     } catch (error) {
         res.sendStatus(401)
     }
@@ -46,7 +28,7 @@ const getById = async (req, res) => {
     }
 }
 
-const getAll = async (req, res) => {
+const getAll = async (req, res) => {    
     try {
         const questions = await Question.findAll()
         res.status(200).json(questions)
@@ -57,7 +39,7 @@ const getAll = async (req, res) => {
 
 
 /***
- *
+ * 
  * TODO : change this
 */
 const getMixedArray = async (req, res) => {
@@ -69,7 +51,7 @@ const getMixedArray = async (req, res) => {
         setTimeout(() => {
             while (mixedArray.length <= length) {
                 const newQuestion = questions[Math.floor(Math.random() * questions.length)]
-
+    
                 if (!(newQuestion in mixedArray)) {
                     mixedArray.push(newQuestion)
                 }
@@ -88,7 +70,7 @@ const createWithArray = async (req, res) => {
             delete question.id
             return question
         })
-
+        
         for (const question of req.body) {
             await sequelize.transaction(async tran => {
                 if (!(question in  questions)) {
@@ -104,16 +86,20 @@ const createWithArray = async (req, res) => {
 
 const deleteById = async (req, res) => {
     try {
-        const question = await Question.findByPk(req.query.id)
-	await question.destroy()
-        res.status(200).send('Deleted')
+	console.log(req.query.id)
+        const tmp = Question.findByPk(req.query.id)
+	await tmp.destroy()
+	//Question.deleteById(req.query.id)
+        res.status(204).json({
+		message: 'deleted',
+	});
     } catch (error) {
         res.sendStatus(400)
+        //res.sendStatus(403) token auth
     }
 }
 
 module.exports = {
-    apiKeyCheck,
     create,
     getById,
     getAll,
