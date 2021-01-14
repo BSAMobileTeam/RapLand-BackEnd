@@ -1,7 +1,7 @@
 require('dotenv').config()
 const Question = require('../models/question')
 
-const {API_KEYV2="abc", VERSION="1.0.1"} = process.env
+const {API_KEYV2, VERSION="1.0.1"} = process.env
 
 const apiKeyCheck = (req, res, next) => {
 	if(req.query.apiKey == API_KEYV2)
