@@ -123,7 +123,7 @@ const updateUser = async (req, res) => {
 const updateUsername = async (req, res) => {
     try {
         const user = await User.findByPk(req.query.id)
-        await user.update(req.username, {
+        await user.update(req.body, {
             where: { id: req.query.id }
         })
 	    res.status(200).send("New username set to: " + user.username)
@@ -135,7 +135,7 @@ const updateUsername = async (req, res) => {
 const updatePassword = async (req, res) => {
     try {
         const user = await User.findByPk(req.query.id)
-        await user.update(req.query.password, {
+        await user.update(req.body, {
             where: { id: req.query.id }
         })
 	    res.status(200).send('Password Updated')
@@ -147,7 +147,7 @@ const updatePassword = async (req, res) => {
 const updateEmail = async (req, res) => {
     try {
         const user = await User.findByPk(req.query.id)
-        await user.update(req.query.email, {
+        await user.update(req.body, {
             where: { id: req.query.id }
         })
 	    res.status(200).send('Email Updated')
@@ -159,7 +159,7 @@ const updateEmail = async (req, res) => {
 const changeAdmin = async (req, res) => {
     try {
         const user = await User.findByPk(req.query.id)
-        await user.update(req.query.admin, {
+        await user.update(req.body, {
             where: { id: req.query.id}
         })
     } catch {
