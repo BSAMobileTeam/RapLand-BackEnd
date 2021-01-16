@@ -1,7 +1,8 @@
 version: '3'
 
 services:
-  postgres:
+  rapJeuDB:
+    container_name: rapJeuDB
     image: postgres:13-alpine
     restart: always
     environment:
@@ -9,3 +10,12 @@ services:
       POSTGRES_USER: rapjeu
     ports:
       - 5432:5432
+  communityDB:
+    container_name: communityDB
+    image: postgres:13-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: community
+      POSTGRES_USER: community
+    ports:
+      - 5433:5432

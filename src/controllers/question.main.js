@@ -1,4 +1,16 @@
-const Question = require('../models/question')
+require('dotenv').config()
+const mainDatabase = require('../main.sequelize')
+const Question = require('../models/question.main')
+
+const {API_KEY, VERSION="1.0.1"} = process.env
+
+const apiKeyCheck = (req, res, next) => {
+	if(req.query.apiKey == API_KEY)
+		next()
+	else {
+		res.sendStatus(401)
+	}
+}
 
 /**
  * for create and create withArray
@@ -9,18 +21,18 @@ const create = async (req, res) => {
     try {
         const questions = await (await Question.findAll()).map(question => {
             delete question.id
-	    delete question.createdAt
-	    delete question.updatedAt
+            delete question.createdAt
+            delete question.updatedAt
             return question
         })
-	console.log(req.body.title)
-	console.log(questions)
-	if(!(req.body in questions)){
-		const newQuestion = await Question.create(req.body)
-		res.status(201).json(newQuestion)
-	} else {
-		res.sendStatus(401).send('Duplicate')
-	}
+        console.log(req.body.title)
+        console.log(questions)
+        if(!(req.body in questions)){
+            const newQuestion = await Question.create(req.body)
+            res.status(201).json(newQuestion)
+        } else {
+            res.sendStatus(401).send('Duplicate')
+        }
     } catch (error) {
         res.sendStatus(401)
     }
@@ -44,9 +56,8 @@ const getAll = async (req, res) => {
     }
 }
 
-
 /***
- * 
+ *
  * TODO : change this
 */
 const getMixedArray = async (req, res) => {
@@ -58,7 +69,7 @@ const getMixedArray = async (req, res) => {
         setTimeout(() => {
             while (mixedArray.length <= length) {
                 const newQuestion = questions[Math.floor(Math.random() * questions.length)]
-    
+
                 if (!(newQuestion in mixedArray)) {
                     mixedArray.push(newQuestion)
                 }
@@ -77,7 +88,7 @@ const createWithArray = async (req, res) => {
             delete question.id
             return question
         })
-        
+
         for (const question of req.body) {
             await sequelize.transaction(async tran => {
                 if (!(question in  questions)) {
@@ -93,21 +104,54 @@ const createWithArray = async (req, res) => {
 
 const deleteById = async (req, res) => {
     try {
-	console.log(req.query.id)
         const question = await Question.findByPk(req.query.id)
-	await question.destroy()
+	    await question.destroy()
         res.status(200).send('Deleted')
     } catch (error) {
         res.sendStatus(400)
-        //res.sendStatus(403) token auth
+    }
+}
+
+const getCount = async (req, res) => {
+    try {
+        const questions = await Question.findAll()
+        res.status(200).send(""+questions.length)
+    } catch (error) {
+        res.sendStatus(500)
+    }
+}
+
+const updateQuestion = async (req, res) => {
+    try {
+	const question = await Question.findByPk(req.query.id)
+	await question.update(req.body, {
+	    where: { id: req.query.id }
+	})
+	res.status(200).send(req.body)
+    } catch {
+	res.sendStatus(404)
+    }
+}
+
+const ping = (req, res) => {
+    try {
+	res.status(200).json({
+	    "version": VERSION
+	})
+    } catch {
+	res.sendStatus(500)
     }
 }
 
 module.exports = {
+    apiKeyCheck,
     create,
     getById,
     getAll,
+    getCount,
     getMixedArray,
+    updateQuestion,
     createWithArray,
-    deleteById
+    deleteById,
+    ping
 }

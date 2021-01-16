@@ -11,7 +11,8 @@ module.exports = () => {
     })
 
     // Define routes
-    require('./routes/question')(app)
+    require('./routes/question.main')(app)
+    require('./routes/question.community')(app)
 
     return app
 }

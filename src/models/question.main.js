@@ -1,8 +1,8 @@
-const sequelize = require('../sequelize')
+const mainDatabase = require('../main.sequelize')
 
 const { DataTypes } = require('sequelize')
 
-const Question = sequelize.define('question', {
+const Question = mainDatabase.define('question', {
     id: {
         type: DataTypes.UUID,
         primaryKey: true,

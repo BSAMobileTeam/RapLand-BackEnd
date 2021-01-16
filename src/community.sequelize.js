@@ -2,9 +2,9 @@
 const { Sequelize } = require('sequelize')
 
 // Creates Sequelize instance
-const sequelize = new Sequelize('rapjeu', 'rapjeu', 'rapjeu', {
+const communityDatabase = new Sequelize('community', 'community', 'community', {
   host: 'localhost',
-  port: 5432,
+  port: 5433,
   dialect: 'postgres',
   pool: {
     min: 0,
@@ -16,7 +16,7 @@ const sequelize = new Sequelize('rapjeu', 'rapjeu', 'rapjeu', {
 });
 
 // Synchronizes database schema
-(async () => await sequelize.sync())()
+(async () => await communityDatabase.sync())()
 
 // Exports items
-module.exports = sequelize
+module.exports = communityDatabase
