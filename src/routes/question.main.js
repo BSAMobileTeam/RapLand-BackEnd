@@ -1,4 +1,7 @@
-const { body, validationResult } = require('express-validator');
+const { body, validationResult, check } = require('express-validator');
+
+const { validate } = require('../validators/index')
+const { checkCreateQuestion } = require('../validators/question')
 
 module.exports = app => {
     const mainController = require('../controllers/question.main')
@@ -15,16 +18,8 @@ module.exports = app => {
     router.post('/updateQuestion', [mainController.apiKeyCheck, mainController.updateQuestion])
     
     router.post('/create',
-    body('id').isEmpty(),
-    body('game').isArray({min: 1}),
-    body('gameMode').isArray({min: 1}),
-    body('type').isString().notEmpty(),
-    body('title').isString().notEmpty(),
-    body('choices').isArray({min: 1}),
-    body('answers').isArray({min: 1}),
-    body('mediaType').isString().optional(),
-    body('mediaUrl').isString().optional(),
-    [mainController.apiKeyCheck, mainController.create])
+    checkCreateQuestion,
+    [validate, mainController.apiKeyCheck, mainController.create])
     
     router.post('/createWithArray', [mainController.apiKeyCheck, mainController.createWithArray])
     
@@ -32,4 +27,3 @@ module.exports = app => {
 
     app.use('/question', router)
 }
-
