@@ -22,11 +22,7 @@ const apiKeyCheck = (req, res, next) => {
 
 const create = async (req, res) => {
     try {
-        const salt = await bcrypt.genSalt()
-        const hashedPassword = await bcrypt.hash(req.body.password, salt)
-        console.log(req.body.password)
-        console.log(salt)
-        console.log(hashedPassword)
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
 
         if(true){ //check duplicate
             const newUser = await User.create(req.body)
@@ -36,6 +32,33 @@ const create = async (req, res) => {
         }
     } catch (error) {
         res.sendStatus(401)
+    }
+}
+
+const login = async (req, res) => {
+    try {
+        const user
+        if(req.query.username) {
+            user = await User.findAll({
+            where: {username:req.query.username}
+            })
+        }
+        else if(req.query.email) {
+            user = await User.findAll({
+            where: {email:req.body.email}
+            })
+        }
+        else {
+            res.sendStatus(404).send('Cannot find user')
+        }
+        if( await bcrypt.compare(req.body.password, user.password)){
+            res.status(200).send('Success')
+        } else {
+            res.status(403).send('Not Allowed')
+        }
+        res.sendStatus(500)
+    } catch {
+        res.sendStatus(403)
     }
 }
 
@@ -186,6 +209,7 @@ const ping = (req, res) => {
 module.exports = {
     apiKeyCheck,
     create,
+    login,
     changeAdmin,
     getByUsername,
     getByEmail,

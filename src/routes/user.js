@@ -2,7 +2,7 @@ module.exports = app => {
     const userController = require('../controllers/user')
     const router = require('express').Router()
     
-	router.get('/create', userController.create)
+	router.post('/create', userController.create)
 
     router.get('/ping', userController.ping)
 
@@ -25,6 +25,8 @@ module.exports = app => {
     router.post('/updateEmail', userController.updateEmail)
     
     router.post('/updateUser', userController.updateUser)
+
+    router.post('/login', userController.login)
         
     router.delete('/deleteById', userController.deleteById)
     
