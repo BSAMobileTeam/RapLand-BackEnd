@@ -6,7 +6,7 @@ module.exports = app => {
 
     router.get('/ping', userController.ping)
 
-    router.get('/changeAdmin', userController.changeAdmin)
+    router.post('/changeAdmin', userController.changeAdmin)
     
     router.get('/getByUsername', userController.getByUsername)
 

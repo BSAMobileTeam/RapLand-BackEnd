@@ -162,6 +162,7 @@ const changeAdmin = async (req, res) => {
         await user.update(req.body, {
             where: { id: req.query.id}
         })
+	res.status(200).send('Status updated')
     } catch {
         res.sendStatus(404)
     }
