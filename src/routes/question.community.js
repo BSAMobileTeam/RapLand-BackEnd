@@ -1,5 +1,3 @@
-const sequelize = require('../main.sequelize')
-
 module.exports = app => {
     const communityController = require('../controllers/question.community')
     const router = require('express').Router()
