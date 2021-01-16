@@ -2,6 +2,9 @@ require('dotenv').config()
 const mainDatabase = require('../main.sequelize')
 const User = require('../models/user')
 
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
+
 const {API_KEY, VERSION="1.0.1"} = process.env
 
 const apiKeyCheck = (req, res, next) => {
@@ -19,7 +22,12 @@ const apiKeyCheck = (req, res, next) => {
 
 const create = async (req, res) => {
     try {
-        
+        const salt = await bcrypt.genSalt()
+        const hashedPassword = await bcrypt.hash(req.body.password, salt)
+        console.log(req.body.password)
+        console.log(salt)
+        console.log(hashedPassword)
+
         if(true){ //check duplicate
             const newUser = await User.create(req.body)
             res.status(201).json(newUser)
