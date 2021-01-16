@@ -33,10 +33,7 @@ const create = async (req, res) => {
 
 const getById = async (req, res) => {
     try {
-        const user = await ( await User.findByPk(req.query.id)).map(user => {
-            delete user.password
-            return user
-        })
+        const user = await User.findByPk(req.query.id)
         res.status(200).json(user)
     } catch (error) {
         res.sendStatus(404)
