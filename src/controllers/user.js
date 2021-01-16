@@ -25,7 +25,12 @@ const create = async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
 
         if(true){ //check duplicate
-            const newUser = await User.create(req.body)
+            const newUser = await User.create({
+                "email": req.body.email,
+                "password": hashedPassword,
+                "username": req.body.username,
+                "admin": req.body.admin
+            })
             res.status(201).json(newUser)
         } else {
             res.sendStatus(401).send('Duplicate')
