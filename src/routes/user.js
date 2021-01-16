@@ -2,6 +2,8 @@ module.exports = app => {
     const userController = require('../controllers/user')
     const router = require('express').Router()
     
+	router.get('/create', userController.create)
+
     router.get('/ping', userController.ping)
 
     router.get('/changeAdmin', userController.changeAdmin)
