@@ -235,7 +235,7 @@ const score = async (req, res) => {
         const user = await User.findAll({
             where: {username:req.user}
         })
-        res.status(200).json(user[0].email)
+        res.status(200).json(user[0].score)
     } catch {
 	    res.sendStatus(500)
     }
