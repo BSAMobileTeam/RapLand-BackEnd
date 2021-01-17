@@ -1,8 +1,6 @@
 require('dotenv').config()
 const communityQuestion = require('../models/question.community')
-/**
- *  TODO: change to questionTmp when db up
- */
+
 const {API_KEYV2, VERSION="1.0.1"} = process.env
 
 const apiKeyCheck = (req, res, next) => {
