@@ -26,6 +26,30 @@ function authenticateToken(req, res, next) {
     }
 }
 
+/**
+ * TODO: Store refresh tokens in DB
+ */
+let refreshTokens = []
+
+function generateAccessToken(user) {
+    return jwt.sign(user, ACCESS_TOKEN_SECRET, { expiresIn: '5m' })
+}
+
+const token = (req, res) => {
+    try {
+        const refreshToken = req.body.token
+        if (refreshToken == null) return res.sendStatus(401)
+        if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403)
+        jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, user) => {
+            if (err) return res.sendStatus(403)
+            const accessToken = generateAccessToken(user.name)
+            res.status(200).send(accessToken)
+        })
+    } catch {
+        res.sendStatus(500)
+    }
+}
+
 const login = async (req, res) => {
     try {
         var user = null
@@ -43,7 +67,7 @@ const login = async (req, res) => {
             res.sendStatus(404).send('Cannot find user')
         }
         if( await bcrypt.compare(req.body.password, user[0].password)){
-            const accessToken = jwt.sign(user[0].username, ACCESS_TOKEN_SECRET)
+            const accessToken = generateAccessToken(user[0].username)
             res.status(200).send(accessToken)
         } else {
             res.status(403).send('Not Allowed')
@@ -55,7 +79,8 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
     try {
-
+        refreshTokens = refreshTokens.filter(token => token !== req.body.token)
+        res.sendStatus(204)
     } catch {
         res.sendStatus(403)
     }
@@ -158,6 +183,7 @@ const ping = (req, res) => {
 
 module.exports = {
     authenticateToken,
+    token,
     login,
     logout,
     updateUsername,

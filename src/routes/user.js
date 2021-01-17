@@ -22,7 +22,9 @@ module.exports = app => {
     
     router.post('/login', userController.login)
         
-    router.post('/logout', userController.logout)
+    router.delete('/logout', userController.logout)
+
+    router.post('/token', userController.token)
 
     app.use('/user', router)
 }
