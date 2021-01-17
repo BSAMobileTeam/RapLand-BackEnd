@@ -9,7 +9,7 @@ const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, API_KEY, VERSION="1.0.1"} = pr
 
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization']
-    const token = authHeader?.split(' ')[1]
+    const token = authHeader && authHeader.split(' ')[1]
     if(token == null) return res.sendStatus(401)
 
     jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
@@ -226,10 +226,11 @@ const ping = (req, res) => {
 /*
 * TODO: Replace with score
 */
-const score = (req, res) => {
-    try { 
+const score = async (req, res) => {
+    try {
+	console.log(req.user)
         const email = await User.findAll({
-            where: {username:req.query.username}
+            where: {username:req.user}
         })[0]
         res.status(200).send(email)
     } catch {
