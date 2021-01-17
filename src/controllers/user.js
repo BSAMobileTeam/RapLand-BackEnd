@@ -56,9 +56,9 @@ const login = async (req, res) => {
         else {
             res.sendStatus(404).send('Cannot find user')
         }
-	console.log(user.password)
+	console.log(user[0].password)
 	console.log(req.body.password)
-        if( await bcrypt.compare(req.body.password, user.password)){
+        if( await bcrypt.compare(req.body.password, user[0].password)){
             res.status(200).send('Success')
         } else {
             res.status(403).send('Not Allowed')
