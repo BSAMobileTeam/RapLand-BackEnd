@@ -14,7 +14,7 @@ module.exports = app => {
     
     router.post('/login', userController.login)
         
-    router.post('/logout', userController.logout)
+//    router.post('/logout', userController.logout)
 
     app.use('/user', userController.authenticateToken, router)
 }
