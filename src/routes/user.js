@@ -4,17 +4,17 @@ module.exports = app => {
     
     router.post('/ping', userController.ping)
                         
-    router.post('/score', userController.score)
+    router.post('/score', userController.authenticateToken, userController.score)
     
-    router.post('/updateUsername', userController.updateUsername)
+    router.post('/updateUsername', userController.authenticateToken, userController.updateUsername)
     
-    router.post('/updatePassword', userController.updatePassword)
+    router.post('/updatePassword', userController.authenticateToken, userController.updatePassword)
     
-    router.post('/updateEmail', userController.updateEmail)
+    router.post('/updateEmail', userController.authenticateToken, userController.updateEmail)
     
     router.post('/login', userController.login)
         
-//    router.post('/logout', userController.logout)
+    router.post('/logout', userController.logout)
 
-    app.use('/user', userController.authenticateToken, router)
+    app.use('/user', router)
 }

@@ -1,5 +1,4 @@
 require('dotenv').config()
-const mainDatabase = require('../main.sequelize')
 const User = require('../models/user')
 
 const jwt = require('jsonwebtoken')
@@ -16,7 +15,7 @@ function authenticateToken(req, res, next) {
         jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
             if(err) return res.sendStatus(403)
             req.user = user
-           /* const userDB = await User.findAll({
+            /* const userDB = await User.findAll({
                 where: {username:req.user}
             })
             req.id = userDB[0].id
@@ -50,6 +49,14 @@ const login = async (req, res) => {
         } else {
             res.status(403).send('Not Allowed')
         }
+    } catch {
+        res.sendStatus(403)
+    }
+}
+
+const logout = async (req, res) => {
+    try {
+
     } catch {
         res.sendStatus(403)
     }
@@ -148,6 +155,7 @@ const ping = (req, res) => {
 module.exports = {
     authenticateToken,
     login,
+    logout,
     updateUsername,
     updatePassword,
     updateEmail,
