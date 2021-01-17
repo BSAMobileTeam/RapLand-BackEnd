@@ -8,15 +8,19 @@ const bcrypt = require('bcrypt')
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, API_KEY, VERSION="1.0.1"} = process.env
 
 function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-    if(token == null) return res.sendStatus(401)
-
-    jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
-        if(err) return res.sendStatus(403)
-        req.user = user
-        next()
-    })
+    try {
+        const authHeader = req.headers['authorization']
+        const token = authHeader && authHeader.split(' ')[1]
+        if(token == null) return res.sendStatus(401)
+    
+        jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
+            if(err) return res.sendStatus(403)
+            req.user = user
+            next()
+        })
+    } catch {
+        res.sendStatus(500)
+    }
 }
 
 const apiKeyCheck = (req, res, next) => {
@@ -232,7 +236,7 @@ const score = async (req, res) => {
         const email = await User.findAll({
             where: {username:req.user}
         })[0]
-        res.status(200).send(email)
+        res.status(200).json(email)
     } catch {
 	    res.sendStatus(500)
     }
