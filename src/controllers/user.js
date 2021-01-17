@@ -42,13 +42,13 @@ const create = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        const user
-        if(req.query.username) {
+        var user = null
+        if(req.body.username) {
             user = await User.findAll({
-            where: {username:req.query.username}
+            where: {username:req.body.username}
             })
         }
-        else if(req.query.email) {
+        else if(req.body.email) {
             user = await User.findAll({
             where: {email:req.body.email}
             })
@@ -56,12 +56,13 @@ const login = async (req, res) => {
         else {
             res.sendStatus(404).send('Cannot find user')
         }
+	console.log(user.password)
+	console.log(req.body.password)
         if( await bcrypt.compare(req.body.password, user.password)){
             res.status(200).send('Success')
         } else {
             res.status(403).send('Not Allowed')
         }
-        res.sendStatus(500)
     } catch {
         res.sendStatus(403)
     }
