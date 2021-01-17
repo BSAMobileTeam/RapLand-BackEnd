@@ -7,6 +7,18 @@ const bcrypt = require('bcrypt')
 
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, API_KEY, VERSION="1.0.1"} = process.env
 
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader?.split(' ')[1]
+    if(token == null) return res.sendStatus(401)
+
+    jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
+        if(err) return res.sendStatus(403)
+        req.user = user
+        next()
+    })
+}
+
 const apiKeyCheck = (req, res, next) => {
 	if(req.query.apiKey == API_KEY)
 		next()
@@ -211,7 +223,22 @@ const ping = (req, res) => {
     }
 }
 
+/*
+* TODO: Replace with score
+*/
+const score = (req, res) => {
+    try { 
+        const email = await User.findAll({
+            where: {username:req.query.username}
+        })[0]
+        res.status(200).send(email)
+    } catch {
+	    res.sendStatus(500)
+    }
+}
+
 module.exports = {
+    authenticateToken,
     apiKeyCheck,
     create,
     login,
@@ -226,5 +253,6 @@ module.exports = {
     updateEmail,
     updateUser,
     deleteById,
-    ping
+    ping,
+    score
 }

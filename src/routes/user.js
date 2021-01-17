@@ -17,6 +17,8 @@ module.exports = app => {
     router.get('/getAll', userController.getAll)
         
     router.get('/count', userController.getCount)
+
+    router.get('/score', userController.authenticateToken, userController.score)
     
     router.post('/updateUsername', userController.updateUsername)
     
