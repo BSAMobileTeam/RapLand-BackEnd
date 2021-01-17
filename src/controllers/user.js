@@ -232,11 +232,10 @@ const ping = (req, res) => {
 */
 const score = async (req, res) => {
     try {
-	console.log(req.user)
-        const email = await User.findAll({
+        const user = await User.findAll({
             where: {username:req.user}
-        })[0]
-        res.status(200).json(email)
+        })
+        res.status(200).json(user[0].email)
     } catch {
 	    res.sendStatus(500)
     }
