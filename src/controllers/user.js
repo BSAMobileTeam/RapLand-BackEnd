@@ -12,13 +12,11 @@ function authenticateToken(req, res, next) {
         const token = authHeader && authHeader.split(' ')[1]
         if(token == null) return res.sendStatus(401)
     
-        jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, user) => {
+        jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
             if(err) return res.sendStatus(403)
-            req.user = user
-            const userDB = await User.findAll({
-                where: {username:req.user}
-            })
-            req.id = userDB[0].id
+            req.id = id
+            const user = await User.findByPk(req.id)
+            req.user = user.username
             next()
         })
     } catch {
@@ -32,7 +30,7 @@ function authenticateToken(req, res, next) {
 let refreshTokens = []
 
 function generateAccessToken(user) {
-    return jwt.sign(user, ACCESS_TOKEN_SECRET, { expiresIn: '5m' })
+    return jwt.sign(user, ACCESS_TOKEN_SECRET)
 }
 
 const token = (req, res) => {
@@ -67,8 +65,10 @@ const login = async (req, res) => {
             res.sendStatus(404).send('Cannot find user')
         }
         if( await bcrypt.compare(req.body.password, user[0].password)){
-            const accessToken = generateAccessToken(user[0].username)
-            res.status(200).send(accessToken)
+            const accessToken = generateAccessToken(user[0].id)
+		const refreshToken = jwt.sign(user[0].id, REFRESH_TOKEN_SECRET)
+		refreshTokens.push(refreshToken)
+            res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken })
         } else {
             res.status(403).send('Not Allowed')
         }
