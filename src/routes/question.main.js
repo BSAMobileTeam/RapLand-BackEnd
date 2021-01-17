@@ -1,7 +1,7 @@
 const { body, validationResult, check } = require('express-validator');
 
 const { validate } = require('../validators/index')
-const { checkCreateQuestion } = require('../validators/question')
+const { checkCreateQuestion } = require('../validators/question.main')
 
 module.exports = app => {
     const mainController = require('../controllers/question.main')

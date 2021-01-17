@@ -1,6 +1,20 @@
 
 const { validationResult } = require('express-validator')
 
+const games = [
+    'rapjeu'
+]
+
+const gameModes = {
+    "rapjeu": [
+        'solo',
+        'multi',
+        'rapjeu',
+        'party',
+        'old school'
+    ]
+}
+
 /**
  * Validates the HTTP request data.
  * If everything is OK, it calls the next middleware function,
@@ -34,31 +48,23 @@ const checkGame = value => {
         throw new Error('game must have at least one element')
     }
     value.forEach(v => {
-        if (
-            typeof v !== 'string' ||
-            v !== 'rapjeu'
-        ) {
+        if (typeof v !== 'string' || !games.includes(v)) {
             throw new Error(`game contains an invalid value : ${v}`)
         }
     })
     return true
 }
 
-const checkGameMode = value => {
+const checkGameMode = (value, { req }) => {
     if (!Array.isArray(value)) {
         throw new Error('gameMode is not an array')
     }
     if (value.length < 1) {
         throw new Error('gameMode must have at least one element')
-    }
+    }    
     value.forEach(v => {
         if (
-            typeof v !== 'string' ||
-            v !== 'solo' &&
-            v !== 'multi' &&
-            v !== 'rapjeu' &&
-            v !== 'party' &&
-            v !== 'old school'
+            typeof v !== 'string' || !gameModes[req.body.game].includes(v)
         ) {
             throw new Error(`gameMode contains an invalid value : ${v}`)
         }

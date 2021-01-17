@@ -11,8 +11,8 @@ const checkCreateQuestion = [
         body('title').isString().notEmpty(),
         body('choices').custom(checkChoices),
         body('answers').custom(checkAnswers),
-        body('mediaType').isString().optional(),
-        body('mediaUrl').isString().optional(),
+        body('mediaType').isString().isIn(['image', 'video', 'audio']).optional().withMessage('mediaType must be "image", "video" or "audio"'),
+        body('mediaUrl').isURL().optional()
     ],
 ]
 
