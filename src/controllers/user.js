@@ -12,14 +12,13 @@ function authenticateToken(req, res, next) {
         const token = authHeader && authHeader.split(' ')[1]
         if(token == null) return res.sendStatus(401)
     
-        jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
+        jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, user) => {
             if(err) return res.sendStatus(403)
             req.user = user
-            /* const userDB = await User.findAll({
+            const userDB = await User.findAll({
                 where: {username:req.user}
             })
             req.id = userDB[0].id
-           */ console.log(req.id)
             next()
         })
     } catch {
