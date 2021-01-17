@@ -6,6 +6,14 @@ module.exports = app => {
                         
     router.post('/score', userController.authenticateToken, userController.score)
     
+    router.post('/email', userController.authenticateToken, userController.email)
+    
+    router.post('/admin', userController.authenticateToken, userController.admin)
+
+    router.post('/addScore', userController.authenticateToken, userController.addScore)
+    
+    router.post('/username', userController.authenticateToken, userController.username)
+    
     router.post('/updateUsername', userController.authenticateToken, userController.updateUsername)
     
     router.post('/updatePassword', userController.authenticateToken, userController.updatePassword)

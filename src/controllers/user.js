@@ -106,6 +106,19 @@ const score = async (req, res) => {
     }
 }
 
+const addScore = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.id)
+        const score = user.score
+        await user.update({ "score": req.body.score + score }, {
+            where: { id: req.id }
+        })
+        res.status(200).json(user.score)
+    } catch {
+	    res.sendStatus(500)
+    }
+}
+
 const username = async (req, res) => {
     try {
         const user = await User.findByPk(req.id)
@@ -150,6 +163,7 @@ module.exports = {
     updateUsername,
     updatePassword,
     updateEmail,
+    addScore,
     username,
     score,
     email,
