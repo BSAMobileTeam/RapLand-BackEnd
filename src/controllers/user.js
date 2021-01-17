@@ -5,7 +5,7 @@ const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 
-const {API_KEY, VERSION="1.0.1"} = process.env
+const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, API_KEY, VERSION="1.0.1"} = process.env
 
 const apiKeyCheck = (req, res, next) => {
 	if(req.query.apiKey == API_KEY)
@@ -56,10 +56,9 @@ const login = async (req, res) => {
         else {
             res.sendStatus(404).send('Cannot find user')
         }
-	console.log(user[0].password)
-	console.log(req.body.password)
         if( await bcrypt.compare(req.body.password, user[0].password)){
-            res.status(200).send('Success')
+            const accessToken = jwt.sign(user[0].username, ACCESS_TOKEN_SECRET)
+            res.status(200).send(accessToken)
         } else {
             res.status(403).send('Not Allowed')
         }
