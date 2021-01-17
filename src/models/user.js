@@ -25,7 +25,13 @@ const User = mainDatabase.define('user', {
     },
     admin: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false
+        defaultValue: false,
+        allowNull: false
+    },
+    score: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false
     }
 })
 
