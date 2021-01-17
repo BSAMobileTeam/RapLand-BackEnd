@@ -63,9 +63,9 @@ const logout = async (req, res) => {
 
 const updateUsername = async (req, res) => {
     try {
-        const user = await User.findByPk(req.query.id)
+        const user = await User.findByPk(req.id)
         await user.update(req.body, {
-            where: { username: req.query.id }
+            where: { username: req.id }
         })
 	    res.status(200).send("New username set to: " + user.username)
     } catch {
@@ -75,9 +75,9 @@ const updateUsername = async (req, res) => {
 
 const updatePassword = async (req, res) => {
     try {
-        const user = await User.findByPk(req.query.id)
+        const user = await User.findByPk(req.id)
         await user.update(req.body, {
-            where: { id: req.query.id }
+            where: { id: req.id }
         })
 	    res.status(200).send('Password Updated')
     } catch {
@@ -87,9 +87,9 @@ const updatePassword = async (req, res) => {
 
 const updateEmail = async (req, res) => {
     try {
-        const user = await User.findByPk(req.query.id)
+        const user = await User.findByPk(req.id)
         await user.update(req.body, {
-            where: { id: req.query.id }
+            where: { id: req.id }
         })
 	    res.status(200).send('Email Updated')
     } catch {
@@ -99,10 +99,8 @@ const updateEmail = async (req, res) => {
 
 const score = async (req, res) => {
     try {
-        const user = await User.findAll({
-            where: {username:req.user}
-        })
-        res.status(200).json(user[0].score)
+        const user = await User.findByPk(req.id)
+        res.status(200).json(user.score)
     } catch {
 	    res.sendStatus(500)
     }
@@ -110,10 +108,8 @@ const score = async (req, res) => {
 
 const username = async (req, res) => {
     try {
-        const user = await User.findAll({
-            where: {username:req.user}
-        })
-        res.status(200).json(user[0].username)
+        const user = await User.findByPk(req.id)
+        res.status(200).json(user.username)
     } catch {
 	    res.sendStatus(500)
     }
@@ -121,10 +117,8 @@ const username = async (req, res) => {
 
 const email = async (req, res) => {
     try {
-        const user = await User.findAll({
-            where: {username:req.user}
-        })
-        res.status(200).json(user[0].email)
+        const user = await User.findByPk(req.id)
+        res.status(200).json(user.email)
     } catch {
 	    res.sendStatus(500)
     }
@@ -132,10 +126,8 @@ const email = async (req, res) => {
 
 const admin = async (req, res) => {
     try {
-        const user = await User.findAll({
-            where: {username:req.user}
-        })
-        res.status(200).json(user[0].admin)
+        const user = await User.findByPk(req.id)
+        res.status(200).json(user.admin)
     } catch {
 	    res.sendStatus(500)
     }
