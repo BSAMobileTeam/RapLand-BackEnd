@@ -39,6 +39,10 @@ const create = async (req, res) => {
     }
 }
 
+
+/***
+ * TODO: return not found if nout found instead of null
+ */
 const getById = async (req, res) => {
     try {
         const question = await communityQuestion.findByPk(req.query.id)

@@ -1,4 +1,7 @@
-const sequelize = require('../main.sequelize')
+const { validate } = require('../validators/index')
+const checkCreateCommunityQuestion = require('../validators/question.community')
+
+const { query } = require('express-validator')
 
 module.exports = app => {
     const communityController = require('../controllers/question.community')
@@ -6,7 +9,11 @@ module.exports = app => {
     
     router.get('/ping', communityController.ping)
     
-    router.get('/getById', communityController.getById)
+    router.get(
+        '/getById',
+        query('id').isUUID(4),
+        [validate, communityController.getById]
+    )
     
     router.get('/getAll', communityController.getAll)
     
@@ -16,7 +23,11 @@ module.exports = app => {
     
     router.post('/updateQuestion', communityController.updateQuestion)
     
-    router.post('/create', communityController.create)
+    router.post(
+        '/create',
+        checkCreateCommunityQuestion,
+        [validate, communityController.create]
+    )
     
     router.post('/createWithArray', communityController.createWithArray)
     

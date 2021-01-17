@@ -5,6 +5,7 @@ const Question = require('../models/question.main')
 const {API_KEY, VERSION="1.0.1"} = process.env
 
 const apiKeyCheck = (req, res, next) => {
+    console.log(API_KEY)
 	if(req.query.apiKey == API_KEY)
 		next()
 	else {
