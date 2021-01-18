@@ -189,7 +189,7 @@ const getById = async (req, res) => {
     try {
         const user = await User.findByPk(req.query.id)
         const admin = await User.findByPk(req.id)
-        if(user.admin){
+        if(admin.admin){
             res.status(200).json(user)
         }
         res.sendStatus(403)
@@ -204,7 +204,7 @@ const getByUsername = async (req, res) => {
             where: {username:req.query.username}
         })
         const admin = await User.findByPk(req.id)
-        if(user.admin){
+        if(admin.admin){
             res.status(200).json(user)
         }
         res.sendStatus(403)

@@ -27,6 +27,8 @@ module.exports = app => {
     router.get('/count', userController.authenticateToken, userController.count)
     
     router.put('/updateUser', userController.authenticateToken, userController.updateUser)
+
+	router.put('/updateUserById', userController.authenticateToken, userController.updateUserById)
     
     router.put('/changeAdmin', userController.authenticateToken, userController.changeAdmin)
 
