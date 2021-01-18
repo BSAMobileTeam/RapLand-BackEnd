@@ -20,14 +20,13 @@ module.exports = app => {
     
     router.post('/createWithArray', communityController.createWithArray)
 
-    router.post('/updateQuestion', communityController.updateQuestion)
+    router.put('/update', communityController.updateQuestion)
     
     router.delete(
         '/deleteById',
         checkDeleteQuestion,
         [validate, communityController.apiKeyCheck, communityController.deleteById]
     )
-    
     
     //TODO: move this
     router.get('/ping', communityController.ping)

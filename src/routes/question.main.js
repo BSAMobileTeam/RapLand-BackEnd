@@ -22,7 +22,8 @@ module.exports = app => {
         checkCreateQuestionWithArray,
         [validate, mainController.apiKeyCheck, mainController.createWithArray])
     
-    router.put('/update',
+    router.put(
+        '/update',
         
         [mainController.apiKeyCheck, mainController.updateQuestion]
     )
