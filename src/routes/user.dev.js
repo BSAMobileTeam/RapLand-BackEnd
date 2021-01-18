@@ -20,13 +20,13 @@ module.exports = app => {
 
     router.get('/score', userController.authenticateToken, userController.score) //delete
     
-    router.post('/updateUsername', userController.updateUsername)
+    router.put('/updateUsername', userController.updateUsername)
     
-    router.post('/updatePassword', userController.updatePassword)
+    router.put('/updatePassword', userController.updatePassword)
     
-    router.post('/updateEmail', userController.updateEmail)
+    router.put('/updateEmail', userController.updateEmail)
     
-    router.post('/updateUser', userController.updateUser)
+    router.put('/updateUser', userController.updateUser)
 
     router.post('/login', userController.login)
         

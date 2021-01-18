@@ -2,23 +2,23 @@ module.exports = app => {
     const userController = require('../controllers/user')
     const router = require('express').Router()
     
-    router.post('/ping', userController.ping)
+    router.get('/ping', userController.ping)
                         
-    router.post('/score', userController.authenticateToken, userController.score)
+    router.get('/score', userController.authenticateToken, userController.score)
     
-    router.post('/email', userController.authenticateToken, userController.email)
+    router.get('/email', userController.authenticateToken, userController.email)
     
-    router.post('/admin', userController.authenticateToken, userController.admin)
+    router.get('/admin', userController.authenticateToken, userController.admin)
 
     router.post('/addScore', userController.authenticateToken, userController.addScore)
     
-    router.post('/username', userController.authenticateToken, userController.username)
+    router.get('/username', userController.authenticateToken, userController.username)
     
-    router.post('/updateUsername', userController.authenticateToken, userController.updateUsername)
+    router.put('/updateUsername', userController.authenticateToken, userController.updateUsername)
     
-    router.post('/updatePassword', userController.authenticateToken, userController.updatePassword)
+    router.put('/updatePassword', userController.authenticateToken, userController.updatePassword)
     
-    router.post('/updateEmail', userController.authenticateToken, userController.updateEmail)
+    router.put('/updateEmail', userController.authenticateToken, userController.updateEmail)
     
     router.post('/login', userController.login)
         
