@@ -64,39 +64,31 @@ const logout = async (req, res) => {
     }
 }
 
-const updateUsername = async (req, res) => {
+const updateUserById = async (req, res) => {
     try {
-        const user = await User.findByPk(req.id)
+        const user = await User.findByPk(req.query.id)
+        const admin = await User.findByPk(req.id)
+        if(admin.admin){
         await user.update(req.body, {
-            where: { username: req.id }
-        })
-	    res.status(200).send("New username set to: " + user.username)
+                where: { id: req.query.id }
+            })
+            res.status(200).send(req.body)
+        }
+        res.sendStatus(403)
     } catch {
-	    res.sendStatus(404)
+        res.sendStatus(404)
     }
 }
 
-const updatePassword = async (req, res) => {
+const updateUser = async (req, res) => {
     try {
         const user = await User.findByPk(req.id)
         await user.update(req.body, {
             where: { id: req.id }
         })
-	    res.status(200).send('Password Updated')
+        res.status(200).send(req.body)
     } catch {
-	    res.sendStatus(404)
-    }
-}
-
-const updateEmail = async (req, res) => {
-    try {
-        const user = await User.findByPk(req.id)
-        await user.update(req.body, {
-            where: { id: req.id }
-        })
-	    res.status(200).send('Email Updated')
-    } catch {
-	    res.sendStatus(404)
+        res.sendStatus(404)
     }
 }
 
@@ -109,7 +101,126 @@ const addScore = async (req, res) => {
         })
         res.status(200).json(user.score)
     } catch {
-	    res.sendStatus(500)
+        res.sendStatus(500)
+    }
+}
+
+const changeAdmin = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.query.id)
+        const admin = await User.findByPk(req.id)
+        if(admin.admin){
+            await user.update(req.body, {
+                where: { id: req.query.id}
+            })
+            res.status(200).send('Status updated')
+        }
+        res.sendStatus(403)
+    } catch {
+        res.sendStatus(404)
+    }
+}
+
+const count = async (req, res) => {
+    try {
+        const users = await User.findAll()
+        const admin = await User.findByPk(req.id)
+        if(admin.admin){
+            res.status(200).send(""+users.length)
+        }
+        res.sendStatus(403)
+    } catch (error) {
+        res.sendStatus(500)
+    }
+}
+
+const create = async (req, res) => {
+    try {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+
+        if(true){ //check duplicate
+            const newUser = await User.create({
+                "email": req.body.email,
+                "password": hashedPassword,
+                "username": req.body.username,
+                "admin": req.body.admin
+            })
+            res.status(201).json(newUser)
+        } else {
+            res.sendStatus(401).send('Duplicate')
+        }
+    } catch (error) {
+        res.sendStatus(401)
+    }
+}
+
+const deleteById = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.query.id)
+        const admin = await User.findByPk(req.id)
+        if(admin.admin){
+            await user.destroy()
+            res.status(200).send('Deleted')
+        }
+        res.sendStatus(403)
+    } catch (error) {
+        res.sendStatus(404)
+    }
+}
+
+const getAll = async (req, res) => {
+    try {
+        const users = await ( await User.findAll()).map(user => {
+            delete user.password
+            return user
+        })
+        const admin = await User.findByPk(req.query.id)
+        if(admin.admin){
+            res.status(200).json(users)
+        }
+        res.sendStatus(403)
+    } catch (error) {
+        res.sendStatus(404)
+    }
+}
+
+const getById = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.query.id)
+        if(user.admin){
+            res.status(200).json(user)
+        }
+        res.sendStatus(403)
+    } catch (error) {
+        res.sendStatus(404)
+    }
+}
+
+const getByUsername = async (req, res) => {
+    try {
+        const user = await User.findAll({
+            where: {username:req.query.username}
+        })
+        if(user.admin){
+            res.status(200).json(user)
+        }
+        res.sendStatus(403)
+    } catch (error) {
+        res.sendStatus(404)
+    }
+}
+
+const getByEmail = async (req, res) => {
+    try {
+        const user = await User.findAll({
+            where: {email:req.query.email}
+        })
+        if(user.admin){
+            res.status(200).json(user)
+        }
+        res.sendStatus(403)
+    } catch (error) {
+        res.sendStatus(404)
     }
 }
 
@@ -119,30 +230,26 @@ const getUser = async (req, res) => {
             delete user.password
             return user
         })
-        res.status(200).json(user.admin)
+        res.status(200).json(user)
     } catch {
-	    res.sendStatus(500)
-    }
-}
-
-const ping = (req, res) => {
-    try {
-        res.status(200).json({
-            "version": VERSION
-        })
-    } catch {
-	    res.sendStatus(500)
+        res.sendStatus(500)
     }
 }
 
 module.exports = {
     authenticateToken,
+    addScore,
+    changeAdmin,
+    count,
+    create,
+    deleteById,
+    getAll,
+    getByEmail,
+    getById,
+    getByUsername,
+    getUser,
     login,
     logout,
-    updateUsername,
-    updatePassword,
-    updateEmail,
-    addScore,
-    getUser,
-    ping
+    updateUser,
+    updateUserById
 }
