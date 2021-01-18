@@ -12,7 +12,7 @@ module.exports = app => {
     
     router.get('/count', communityController.getCount)
     
-    router.post('/updateQuestion', communityController.updateQuestion)
+    router.put('/updateQuestion', communityController.updateQuestion)
     
     router.post('/create', communityController.create)
     

@@ -1,127 +1,96 @@
 require('dotenv').config()
-const mainDatabase = require('../main.sequelize')
 const User = require('../models/user')
 
-const {API_KEY, VERSION="1.0.1"} = process.env
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 
-const apiKeyCheck = (req, res, next) => {
-	if(req.query.apiKey == API_KEY)
-		next()
-	else {
-		res.sendStatus(401)
-	}
-}
+const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, VERSION="1.0.1"} = process.env
 
-/**
- * for create and create withArray
- * check if question does not already exists
- */
-
-const create = async (req, res) => {
+function authenticateToken(req, res, next) {
     try {
-        
-        if(true){ //check duplicate
-            const newUser = await User.create(req.body)
-            res.status(201).json(newUser)
-        } else {
-            res.sendStatus(401).send('Duplicate')
-        }
-    } catch (error) {
-        res.sendStatus(401)
-    }
-}
-
-const getById = async (req, res) => {
-    try {
-        const user = await User.findByPk(req.query.id)
-        res.status(200).json(user)
-    } catch (error) {
-        res.sendStatus(404)
-    }
-}
-
-const getByUsername = async (req, res) => {
-    try {
-        const user = await ( await User.findAll({
-            where: {username:req.query.username}
-        })).map(user => {
-            delete user.password
-            return user
+        const authHeader = req.headers['authorization']
+        const token = authHeader && authHeader.split(' ')[1]
+        if(token == null) return res.sendStatus(401)
+    
+        jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
+            if(err) return res.sendStatus(403)
+            req.id = id
+            const user = await User.findByPk(req.id)
+            req.user = user.username
+            next()
         })
-        res.status(200).json(user)
-    } catch (error) {
-        res.sendStatus(404)
-    }
-}
-
-const getByEmail = async (req, res) => {
-    try {
-        const user = await ( await User.findAll({
-            where: {email:req.query.email}
-        })).map(user => {
-            delete user.password
-            return user
-        })
-        res.status(200).json(user)
-    } catch (error) {
-        res.sendStatus(404)
-    }
-}
-
-const getAll = async (req, res) => {
-    try {
-        const users = await ( await User.findAll()).map(user => {
-            delete user.password
-            return user
-        })
-        res.status(200).json(users)
-    } catch (error) {
-        res.sendStatus(404)
-    }
-}
-
-const deleteById = async (req, res) => {
-    try {
-        const user = await User.findByPk(req.query.id)
-	    await user.destroy()
-        res.status(200).send('Deleted')
-    } catch (error) {
-        res.sendStatus(400)
-    }
-}
-
-const getCount = async (req, res) => {
-    try {
-        const users = await User.findAll()
-        res.status(200).send(""+users.length)
-    } catch (error) {
+    } catch {
         res.sendStatus(500)
     }
 }
 
-/*
-* TODO: check if username is not taken
-*/
-const updateUser = async (req, res) => {
+/**
+ * TODO: Store refresh tokens in DB
+ */
+let refreshTokens = []
+
+function generateAccessToken(user) {
+    return jwt.sign(user, ACCESS_TOKEN_SECRET)
+}
+
+const token = (req, res) => {
     try {
-        const user = await User.findByPk(req.query.id)
-        await user.update(req.body, {
-            where: { id: req.query.id }
+        const refreshToken = req.body.token
+        if (refreshToken == null) return res.sendStatus(401)
+        if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403)
+        jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, user) => {
+            if (err) return res.sendStatus(403)
+            const accessToken = generateAccessToken(user.name)
+            res.status(200).send(accessToken)
         })
-	    res.status(200).send(req.body)
     } catch {
-	    res.sendStatus(404)
+        res.sendStatus(500)
     }
 }
 
-/*
-* TODO: check if username is not taken
-*/
+const login = async (req, res) => {
+    try {
+        var user = null
+        if(req.body.username) {
+            user = await User.findAll({
+            where: {username:req.body.username}
+            })
+        }
+        else if(req.body.email) {
+            user = await User.findAll({
+            where: {email:req.body.email}
+            })
+        }
+        else {
+            res.sendStatus(404).send('Cannot find user')
+        }
+        if( await bcrypt.compare(req.body.password, user[0].password)){
+            const accessToken = generateAccessToken(user[0].id)
+		const refreshToken = jwt.sign(user[0].id, REFRESH_TOKEN_SECRET)
+		refreshTokens.push(refreshToken)
+            res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken })
+        } else {
+            res.status(403).send('Not Allowed')
+        }
+    } catch {
+        res.sendStatus(403)
+    }
+}
+
+const logout = async (req, res) => {
+    try {
+        refreshTokens = refreshTokens.filter(token => token !== req.body.token)
+        res.sendStatus(204)
+    } catch {
+        res.sendStatus(403)
+    }
+}
+
 const updateUsername = async (req, res) => {
     try {
-        const user = await User.findByPk(req.query.id)
+        const user = await User.findByPk(req.id)
         await user.update(req.body, {
-            where: { id: req.query.id }
+            where: { username: req.id }
         })
 	    res.status(200).send("New username set to: " + user.username)
     } catch {
@@ -131,9 +100,9 @@ const updateUsername = async (req, res) => {
 
 const updatePassword = async (req, res) => {
     try {
-        const user = await User.findByPk(req.query.id)
+        const user = await User.findByPk(req.id)
         await user.update(req.body, {
-            where: { id: req.query.id }
+            where: { id: req.id }
         })
 	    res.status(200).send('Password Updated')
     } catch {
@@ -143,9 +112,9 @@ const updatePassword = async (req, res) => {
 
 const updateEmail = async (req, res) => {
     try {
-        const user = await User.findByPk(req.query.id)
+        const user = await User.findByPk(req.id)
         await user.update(req.body, {
-            where: { id: req.query.id }
+            where: { id: req.id }
         })
 	    res.status(200).send('Email Updated')
     } catch {
@@ -153,15 +122,52 @@ const updateEmail = async (req, res) => {
     }
 }
 
-const changeAdmin = async (req, res) => {
+const score = async (req, res) => {
     try {
-        const user = await User.findByPk(req.query.id)
-        await user.update(req.body, {
-            where: { id: req.query.id}
-        })
-	res.status(200).send('Status updated')
+        const user = await User.findByPk(req.id)
+        res.status(200).json(user.score)
     } catch {
-        res.sendStatus(404)
+	    res.sendStatus(500)
+    }
+}
+
+const addScore = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.id)
+        const score = user.score
+        await user.update({ "score": req.body.score + score }, {
+            where: { id: req.id }
+        })
+        res.status(200).json(user.score)
+    } catch {
+	    res.sendStatus(500)
+    }
+}
+
+const username = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.id)
+        res.status(200).json(user.username)
+    } catch {
+	    res.sendStatus(500)
+    }
+}
+
+const email = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.id)
+        res.status(200).json(user.email)
+    } catch {
+	    res.sendStatus(500)
+    }
+}
+
+const admin = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.id)
+        res.status(200).json(user.admin)
+    } catch {
+	    res.sendStatus(500)
     }
 }
 
@@ -176,18 +182,17 @@ const ping = (req, res) => {
 }
 
 module.exports = {
-    apiKeyCheck,
-    create,
-    changeAdmin,
-    getByUsername,
-    getByEmail,
-    getById,
-    getAll,
-    getCount,
+    authenticateToken,
+    token,
+    login,
+    logout,
     updateUsername,
     updatePassword,
     updateEmail,
-    updateUser,
-    deleteById,
+    addScore,
+    username,
+    score,
+    email,
+    admin,
     ping
 }

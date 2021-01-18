@@ -2,31 +2,29 @@ module.exports = app => {
     const userController = require('../controllers/user')
     const router = require('express').Router()
     
-	router.get('/create', userController.create)
-
     router.get('/ping', userController.ping)
+                        
+    router.get('/score', userController.authenticateToken, userController.score)
+    
+    router.get('/email', userController.authenticateToken, userController.email)
+    
+    router.get('/admin', userController.authenticateToken, userController.admin)
 
-    router.post('/changeAdmin', userController.changeAdmin)
+    router.post('/addScore', userController.authenticateToken, userController.addScore)
     
-    router.get('/getByUsername', userController.getByUsername)
+    router.get('/username', userController.authenticateToken, userController.username)
+    
+    router.put('/updateUsername', userController.authenticateToken, userController.updateUsername)
+    
+    router.put('/updatePassword', userController.authenticateToken, userController.updatePassword)
+    
+    router.put('/updateEmail', userController.authenticateToken, userController.updateEmail)
+    
+    router.post('/login', userController.login)
+        
+    router.delete('/logout', userController.logout)
 
-    router.get('/getByEmail', userController.getByEmail)
-    
-    router.get('/getById', userController.getById)
-        
-    router.get('/getAll', userController.getAll)
-        
-    router.get('/count', userController.getCount)
-    
-    router.post('/updateUsername', userController.updateUsername)
-    
-    router.post('/updatePassword', userController.updatePassword)
-    
-    router.post('/updateEmail', userController.updateEmail)
-    
-    router.post('/updateUser', userController.updateUser)
-        
-    router.delete('/deleteById', userController.deleteById)
-    
-    app.use('/user', [userController.apiKeyCheck, router])
+    router.post('/token', userController.token)
+
+    app.use('/user', router)
 }

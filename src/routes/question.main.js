@@ -12,7 +12,7 @@ module.exports = app => {
     
     router.get('/count', mainController.getCount)
     
-    router.post('/updateQuestion', [mainController.apiKeyCheck, mainController.updateQuestion])
+    router.put('/updateQuestion', [mainController.apiKeyCheck, mainController.updateQuestion])
     
     router.post('/create',
     body('id').isEmpty(),
