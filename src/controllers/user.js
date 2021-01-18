@@ -145,7 +145,8 @@ const create = async (req, res) => {
                 "username": req.body.username,
                 "admin": req.body.admin
             })
-            res.status(201).json(newUser)
+            const accessToken = generateAccessToken(newUser.id)
+            res.status(201).json(accessToken)
         } else {
             res.sendStatus(401).send('Duplicate')
         }
