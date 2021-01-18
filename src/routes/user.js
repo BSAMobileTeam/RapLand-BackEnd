@@ -2,17 +2,11 @@ module.exports = app => {
     const userController = require('../controllers/user')
     const router = require('express').Router()
     
-    router.post('/create', userController.authenticateToken, userController.create)
-                            
     router.get('/getUser', userController.authenticateToken, userController.getUser)
-
+    
     router.post('/addScore', userController.authenticateToken, userController.addScore)
-        
-    router.put('/updateUsername', userController.authenticateToken, userController.updateUsername)
-    
-    router.put('/updatePassword', userController.authenticateToken, userController.updatePassword)
-    
-    router.put('/updateEmail', userController.authenticateToken, userController.updateEmail)
+
+    router.post('/register', userController.create)
     
     router.post('/login', userController.login)
         
