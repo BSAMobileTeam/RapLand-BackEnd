@@ -1,4 +1,6 @@
 
+const { query } = require('express-validator')
+
 const questionTypes = [
     'opened',
     'closed',
@@ -26,8 +28,7 @@ const gameModes = {
     ]
 }
 
-const checkGame = value => {
-    console.log("game = ", value)
+const checkGame = value => {    
     if (!Array.isArray(value)) {
         throw new Error('game is not an array')
     }
@@ -117,11 +118,18 @@ const checkMediaType = value => {
     return true
 }
 
+const checkDeleteQuestion = [
+    query('apiKey').isString().notEmpty(),
+    query('id').isUUID(4)
+]
+
+
 module.exports = {
     checkGame,
     checkGameMode,
     checkChoices,
     checkAnswers,
     checkQuestionType,
-    checkMediaType
+    checkMediaType,
+    checkDeleteQuestion
 }

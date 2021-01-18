@@ -1,30 +1,15 @@
 
-const { validate } = require('../validators/index')
+const { validate } = require('../validators/index');
 const {
     checkCreateQuestion,
     checkGetQuestionById,
-    checkCreateQuestionWithArray
+    checkCreateQuestionWithArray,    
 } = require('../validators/question.main')
+const { checkDeleteQuestion } = require('../validators/question.index')
 
 module.exports = app => {
     const mainController = require('../controllers/question.main')
     const router = require('express').Router()
- 
-    router.get(
-        '/getById',
-        checkGetQuestionById,
-        [validate, mainController.getById]
-    )
-    
-    router.get('/getAll', mainController.getAll)
-    
-    router.get('/getMixedArray', mainController.getMixedArray)
-    
-    router.get('/count', mainController.getCount)
-    
-    router.post('/updateQuestion',
-        [mainController.apiKeyCheck, mainController.updateQuestion]
-    )
     
     router.post(
         '/create',
@@ -37,7 +22,29 @@ module.exports = app => {
         checkCreateQuestionWithArray,
         [validate, mainController.apiKeyCheck, mainController.createWithArray])
     
-    router.delete('/deleteById', [mainController.apiKeyCheck, mainController.deleteById])
+    router.put('/update',
+        
+        [mainController.apiKeyCheck, mainController.updateQuestion]
+    )
+
+    router.delete(
+        '/deleteById',
+        checkDeleteQuestion,
+        [validate, mainController.apiKeyCheck, mainController.deleteById]
+    )
+ 
+    router.get(
+        '/getById',
+        checkGetQuestionById,
+        [validate, mainController.getById]
+    )
+    
+
+    router.get('/getMixedArray', mainController.getMixedArray)
+    
+    router.get('/getAll', mainController.getAll)
+    
+    router.get('/count', mainController.getCount)
 
     app.use('/question', router)
 }

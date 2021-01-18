@@ -1,5 +1,10 @@
 const { validate } = require('../validators/index')
-const checkCreateCommunityQuestion = require('../validators/question.community')
+const {
+    checkCreateCommunityQuestion
+} = require('../validators/question.community')
+const {
+    checkDeleteQuestion
+} = require('../validators/question.index')
 
 const { query } = require('express-validator')
 
@@ -7,6 +12,24 @@ module.exports = app => {
     const communityController = require('../controllers/question.community')
     const router = require('express').Router()
     
+    router.post(
+        '/create',
+        checkCreateCommunityQuestion,
+        [validate, communityController.create]
+    )
+    
+    router.post('/createWithArray', communityController.createWithArray)
+
+    router.post('/updateQuestion', communityController.updateQuestion)
+    
+    router.delete(
+        '/deleteById',
+        checkDeleteQuestion,
+        [validate, communityController.apiKeyCheck, communityController.deleteById]
+    )
+    
+    
+    //TODO: move this
     router.get('/ping', communityController.ping)
     
     router.get(
@@ -21,17 +44,5 @@ module.exports = app => {
     
     router.get('/count', communityController.getCount)
     
-    router.post('/updateQuestion', communityController.updateQuestion)
-    
-    router.post(
-        '/create',
-        checkCreateCommunityQuestion,
-        [validate, communityController.create]
-    )
-    
-    router.post('/createWithArray', communityController.createWithArray)
-    
-    router.delete('/deleteById', communityController.deleteById)
-    
-    app.use('/communityQuestion', [communityController.apiKeyCheck, router])
+    app.use('/communityQuestion', router)
 }

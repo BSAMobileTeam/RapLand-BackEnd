@@ -39,8 +39,22 @@ const checkCreateQuestionWithArray = [
     body('*.mediaUrl').isURL().optional()
 ]
 
+const checkUpdateQuestion = [
+    query('apiKey').isString().notEmpty(),
+    query('id').isUUID(4),
+    body('game').custom(checkGame).optional(),
+    body('gameMode').custom(checkGameMode).optional(),
+    body('type').custom(checkQuestionType).optional(),
+    body('title').isString().notEmpty().isLength({min: 1, max: 255}).optional(),
+    body('choices').custom(checkChoices).optional(),
+    body('answers').custom(checkAnswers).optional(),
+    body('mediaType').custom(checkMediaType).optional(),
+    body('mediaUrl').isURL().optional()
+]
+
 module.exports = {
     checkCreateQuestion,
     checkGetQuestionById,
-    checkCreateQuestionWithArray
+    checkCreateQuestionWithArray,
+    checkUpdateQuestion
 }

@@ -22,4 +22,6 @@ const checkCreateCommunityQuestion = [
         body('mediaUrl').isURL().optional()
 ]
 
-module.exports = checkCreateCommunityQuestion
+module.exports = {
+    checkCreateCommunityQuestion
+}
