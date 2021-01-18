@@ -4,7 +4,7 @@ const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 
-const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, VERSION="1.0.1"} = process.env
+const {ACCESS_TOKEN_SECRET, VERSION="1.0.1"} = process.env
 
 function authenticateToken(req, res, next) {
     try {
@@ -24,28 +24,8 @@ function authenticateToken(req, res, next) {
     }
 }
 
-/**
- * TODO: Store refresh tokens in DB
- */
-let refreshTokens = []
-
 function generateAccessToken(user) {
     return jwt.sign(user, ACCESS_TOKEN_SECRET)
-}
-
-const token = (req, res) => {
-    try {
-        const refreshToken = req.body.token
-        if (refreshToken == null) return res.sendStatus(401)
-        if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403)
-        jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, user) => {
-            if (err) return res.sendStatus(403)
-            const accessToken = generateAccessToken(user.name)
-            res.status(200).send(accessToken)
-        })
-    } catch {
-        res.sendStatus(500)
-    }
 }
 
 const login = async (req, res) => {
@@ -66,9 +46,7 @@ const login = async (req, res) => {
         }
         if( await bcrypt.compare(req.body.password, user[0].password)){
             const accessToken = generateAccessToken(user[0].id)
-		const refreshToken = jwt.sign(user[0].id, REFRESH_TOKEN_SECRET)
-		refreshTokens.push(refreshToken)
-            res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken })
+            res.status(200).json({ accessToken: accessToken })
         } else {
             res.status(403).send('Not Allowed')
         }
@@ -79,7 +57,7 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
     try {
-        refreshTokens = refreshTokens.filter(token => token !== req.body.token)
+        //somehow logout user ?
         res.sendStatus(204)
     } catch {
         res.sendStatus(403)
@@ -122,15 +100,6 @@ const updateEmail = async (req, res) => {
     }
 }
 
-const score = async (req, res) => {
-    try {
-        const user = await User.findByPk(req.id)
-        res.status(200).json(user.score)
-    } catch {
-	    res.sendStatus(500)
-    }
-}
-
 const addScore = async (req, res) => {
     try {
         const user = await User.findByPk(req.id)
@@ -144,27 +113,12 @@ const addScore = async (req, res) => {
     }
 }
 
-const username = async (req, res) => {
+const getUser = async (req, res) => {
     try {
-        const user = await User.findByPk(req.id)
-        res.status(200).json(user.username)
-    } catch {
-	    res.sendStatus(500)
-    }
-}
-
-const email = async (req, res) => {
-    try {
-        const user = await User.findByPk(req.id)
-        res.status(200).json(user.email)
-    } catch {
-	    res.sendStatus(500)
-    }
-}
-
-const admin = async (req, res) => {
-    try {
-        const user = await User.findByPk(req.id)
+        const user = await ( await User.findByPk(req.id)).map( user => {
+            delete user.password
+            return user
+        })
         res.status(200).json(user.admin)
     } catch {
 	    res.sendStatus(500)
@@ -183,16 +137,12 @@ const ping = (req, res) => {
 
 module.exports = {
     authenticateToken,
-    token,
     login,
     logout,
     updateUsername,
     updatePassword,
     updateEmail,
     addScore,
-    username,
-    score,
-    email,
-    admin,
+    getUser,
     ping
 }

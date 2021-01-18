@@ -4,16 +4,10 @@ module.exports = app => {
     
     router.get('/ping', userController.ping)
                         
-    router.get('/score', userController.authenticateToken, userController.score)
-    
-    router.get('/email', userController.authenticateToken, userController.email)
-    
-    router.get('/admin', userController.authenticateToken, userController.admin)
+    router.get('/getUser', userController.authenticateToken, userController.score)
 
     router.post('/addScore', userController.authenticateToken, userController.addScore)
-    
-    router.get('/username', userController.authenticateToken, userController.username)
-    
+        
     router.put('/updateUsername', userController.authenticateToken, userController.updateUsername)
     
     router.put('/updatePassword', userController.authenticateToken, userController.updatePassword)
@@ -23,8 +17,6 @@ module.exports = app => {
     router.post('/login', userController.login)
         
     router.delete('/logout', userController.logout)
-
-    router.post('/token', userController.token)
 
     app.use('/user', router)
 }
