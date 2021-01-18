@@ -60,6 +60,24 @@ const checkGameMode = (value, { req }) => {
     return true
 }
 
+const checkGameModeForArray = (value, { req, _, path }) => {  
+    if (!Array.isArray(value)) {
+        throw new Error('gameMode is not an array')
+    }
+    if (value.length < 1) {
+        throw new Error('gameMode must have at least one element')
+    }
+    const index = parseInt(path.substring(1, path.indexOf(']')))
+    value.forEach(v => {        
+        if (
+            typeof v !== 'string' || !gameModes[req.body[index].game].includes(v)
+        ) {
+            throw new Error(`gameMode contains an invalid value : ${v}`)
+        }
+    })
+    return true
+}
+
 const checkChoices = value => {
     if (!Array.isArray(value)) {
         throw new Error('choices is not an array')
@@ -77,11 +95,12 @@ const checkChoices = value => {
     return true
 }
 
-const checkAnswers = (value, { req }) => {
-    if (!req.body["choices"]) {
+const checkAnswers = (value, { req, _, path }) => {
+    const index = parseInt(path.substring(1, path.indexOf(']')))
+    if (!req.body[index]["choices"]) {
         throw new Error('There is no choices')
     }
-    if (checkChoices(req.body["choices"]) !== true) {
+    if (checkChoices(req.body[index]["choices"]) !== true) {
         throw new Error('There is an error in the choices')
     }
     if (!Array.isArray(value)) {
@@ -91,7 +110,7 @@ const checkAnswers = (value, { req }) => {
         throw new Error('answers must have at least one element')
     }
     value.forEach(v => {        
-        if (!req.body["choices"].includes(v)) {
+        if (!req.body[index]["choices"].includes(v)) {
             throw new Error(`This answer is not in the choices array: ${v}`)
         }
     })
@@ -127,6 +146,7 @@ const checkDeleteQuestion = [
 module.exports = {
     checkGame,
     checkGameMode,
+    checkGameModeForArray,
     checkChoices,
     checkAnswers,
     checkQuestionType,

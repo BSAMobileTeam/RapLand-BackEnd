@@ -3,6 +3,7 @@ const { body, query } = require('express-validator');
 const {
     checkGame,
     checkGameMode,
+    checkGameModeForArray,
     checkChoices,
     checkAnswers,
     checkQuestionType,
@@ -30,7 +31,7 @@ const checkCreateQuestionWithArray = [
     query('apiKey').isString().notEmpty(),
     body('*.id').isEmpty(),
     body('*.game').custom(checkGame),
-    body('*.gameMode').custom(checkGameMode),
+    body('*.gameMode').custom(checkGameModeForArray),
     body('*.type').custom(checkQuestionType),
     body('*.title').isString().notEmpty().isLength({min: 1, max: 255}),
     body('*.choices').custom(checkChoices),

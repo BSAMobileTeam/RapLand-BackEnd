@@ -18,7 +18,7 @@ const validate = (req, res, next) => {
         next()
     }
     else {
-        console.log(errors.array())
+        // console.log(errors.array())
     //   logger.warn(JSON.stringify(errors.array()))
         res.status(422).json({
             errors: errors.array()
