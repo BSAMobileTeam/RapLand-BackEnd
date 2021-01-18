@@ -230,10 +230,7 @@ const getByEmail = async (req, res) => {
 
 const getUser = async (req, res) => {
     try {
-        const user = await ( await User.findByPk(req.id)).map( user => {
-            delete user.password
-            return user
-        })
+        const user = await User.findByPk(req.id)
         res.status(200).json(user)
     } catch {
         res.sendStatus(500)
