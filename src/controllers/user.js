@@ -175,7 +175,7 @@ const getAll = async (req, res) => {
             delete user.password
             return user
         })
-        const admin = await User.findByPk(req.query.id)
+        const admin = await User.findByPk(req.id)
         if(admin.admin){
             res.status(200).json(users)
         }
@@ -188,6 +188,7 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
     try {
         const user = await User.findByPk(req.query.id)
+        const admin = await User.findByPk(req.id)
         if(user.admin){
             res.status(200).json(user)
         }
@@ -202,6 +203,7 @@ const getByUsername = async (req, res) => {
         const user = await User.findAll({
             where: {username:req.query.username}
         })
+        const admin = await User.findByPk(req.id)
         if(user.admin){
             res.status(200).json(user)
         }
@@ -216,7 +218,8 @@ const getByEmail = async (req, res) => {
         const user = await User.findAll({
             where: {email:req.query.email}
         })
-        if(user.admin){
+        const admin = await User.findByPk(req.id)
+        if(admin.admin){
             res.status(200).json(user)
         }
         res.sendStatus(403)
