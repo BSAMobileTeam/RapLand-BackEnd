@@ -2,29 +2,35 @@ module.exports = app => {
     const userController = require('../controllers/user')
     const router = require('express').Router()
     
-    router.get('/ping', userController.ping)
-                        
-    router.get('/score', userController.authenticateToken, userController.score)
+    router.get('/getUser', userController.authenticateToken, userController.getUser)
     
-    router.get('/email', userController.authenticateToken, userController.email)
-    
-    router.get('/admin', userController.authenticateToken, userController.admin)
-
     router.post('/addScore', userController.authenticateToken, userController.addScore)
-    
-    router.get('/username', userController.authenticateToken, userController.username)
-    
-    router.put('/updateUsername', userController.authenticateToken, userController.updateUsername)
-    
-    router.put('/updatePassword', userController.authenticateToken, userController.updatePassword)
-    
-    router.put('/updateEmail', userController.authenticateToken, userController.updateEmail)
+
+    router.post('/register', userController.create)
     
     router.post('/login', userController.login)
         
     router.delete('/logout', userController.logout)
 
-    router.post('/token', userController.token)
+    // Admin
+    
+    router.delete('/deleteById', userController.authenticateToken, userController.deleteById)
+
+    router.get('/getByUsername', userController.authenticateToken, userController.getByUsername)
+
+    router.get('/getByEmail', userController.authenticateToken, userController.getByEmail)
+    
+    router.get('/getById', userController.authenticateToken, userController.getById)
+        
+    router.get('/getAll', userController.authenticateToken, userController.getAll)
+    
+    router.get('/count', userController.authenticateToken, userController.count)
+    
+    router.put('/updateUser', userController.authenticateToken, userController.updateUser)
+
+	router.put('/updateUserById', userController.authenticateToken, userController.updateUserById)
+    
+    router.put('/changeAdmin', userController.authenticateToken, userController.changeAdmin)
 
     app.use('/user', router)
 }
