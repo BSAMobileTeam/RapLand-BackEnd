@@ -16,8 +16,12 @@ function authenticateToken(req, res, next) {
             if(err) return res.sendStatus(403)
             req.id = id
             const user = await User.findByPk(req.id)
-            req.user = user.username
-            next()
+            if(user !== null){
+                req.user = user.username
+                next()
+            } else {
+                res.sendStatus(403)
+            }
         })
     } catch (error) {
         res.sendStatus(500)
