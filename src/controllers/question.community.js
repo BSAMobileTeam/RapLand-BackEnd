@@ -1,14 +1,46 @@
 require('dotenv').config()
 const communityQuestion = require('../models/question.community')
 
-const {API_KEYV2, VERSION="1.0.1"} = process.env
+const {ACCESS_TOKEN_SECRET, VERSION="1.0.1"} = process.env
 
-const apiKeyCheck = (req, res, next) => {
-	if(req.query.apiKey == API_KEYV2)
-		next()
-	else {
-		res.sendStatus(401)
-	}
+function authenticateToken(req, res, next) {
+    try {
+        const authHeader = req.headers['authorization']
+        const token = authHeader && authHeader.split(' ')[1]
+        if(token == null) return res.sendStatus(401)
+    
+        jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
+            if(err) return res.sendStatus(403)
+            req.id = id
+            const user = await User.findByPk(req.id)
+            req.user = user.username
+            next()
+        })
+    } catch {
+        res.sendStatus(500)
+    }
+}
+
+function authenticateAdmin(req, res, next) {
+    try {
+        const authHeader = req.headers['authorization']
+        const token = authHeader && authHeader.split(' ')[1]
+        if(token == null) return res.sendStatus(401)
+    
+        jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
+            if(err) return res.sendStatus(403)
+            req.id = id
+            const user = await User.findByPk(req.id)
+            req.user = user.username
+            if(user.admin){
+                next()
+            } else {
+                res.sendStatus(403)
+            }
+        })
+    } catch {
+        res.sendStatus(500)
+    }
 }
 
 /**
@@ -147,7 +179,8 @@ const ping = (req, res) => {
 }
 
 module.exports = {
-    apiKeyCheck,
+    authenticateAdmin,
+    authenticateToken,
     create,
     getById,
     getAll,

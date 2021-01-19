@@ -2,14 +2,28 @@ require('dotenv').config()
 const mainDatabase = require('../main.sequelize')
 const Question = require('../models/question.main')
 
-const {API_KEY, VERSION="1.0.1"} = process.env
+const {ACCESS_TOKEN_SECRET, VERSION="1.0.1"} = process.env
 
-const apiKeyCheck = (req, res, next) => {    
-	if(req.query.apiKey == API_KEY)
-		next()
-	else {
-		res.sendStatus(401)
-	}
+function authenticateAdmin(req, res, next) {
+    try {
+        const authHeader = req.headers['authorization']
+        const token = authHeader && authHeader.split(' ')[1]
+        if(token == null) return res.sendStatus(401)
+    
+        jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
+            if(err) return res.sendStatus(403)
+            req.id = id
+            const user = await User.findByPk(req.id)
+            req.user = user.username
+            if(user.admin){
+                next()
+            } else {
+                res.sendStatus(403)
+            }
+        })
+    } catch {
+        res.sendStatus(500)
+    }
 }
 
 /**
@@ -142,7 +156,7 @@ const ping = (req, res) => {
 }
 
 module.exports = {
-    apiKeyCheck,
+    authenticateAdmin,
     create,
     getById,
     getAll,

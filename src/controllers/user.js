@@ -4,7 +4,7 @@ const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 
-const {ACCESS_TOKEN_SECRET, VERSION="1.0.1"} = process.env
+const {ACCESS_TOKEN_SECRET} = process.env
 
 function authenticateToken(req, res, next) {
     try {
