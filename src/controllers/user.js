@@ -19,7 +19,7 @@ function authenticateToken(req, res, next) {
             req.user = user.username
             next()
         })
-    } catch {
+    } catch (error) {
         res.sendStatus(500)
     }
 }
@@ -50,7 +50,7 @@ const login = async (req, res) => {
         } else {
             res.status(403).send('Not Allowed')
         }
-    } catch {
+    } catch (error) {
         res.sendStatus(403)
     }
 }
@@ -59,7 +59,7 @@ const logout = async (req, res) => {
     try {
         //somehow logout user ?
         res.sendStatus(204)
-    } catch {
+    } catch (error) {
         res.sendStatus(403)
     }
 }
@@ -75,7 +75,7 @@ const updateUserById = async (req, res) => {
             res.status(200).send(req.body)
         }
         res.sendStatus(403)
-    } catch {
+    } catch (error) {
         res.sendStatus(404)
     }
 }
@@ -87,7 +87,7 @@ const updateUser = async (req, res) => {
             where: { id: req.id }
         })
         res.status(200).send(req.body)
-    } catch {
+    } catch (error) {
         res.sendStatus(404)
     }
 }
@@ -100,7 +100,7 @@ const addScore = async (req, res) => {
             where: { id: req.id }
         })
         res.status(200).json(user.score)
-    } catch {
+    } catch (error) {
         res.sendStatus(500)
     }
 }
@@ -116,7 +116,7 @@ const changeAdmin = async (req, res) => {
             res.status(200).send('Status updated')
         }
         res.sendStatus(403)
-    } catch {
+    } catch (error) {
         res.sendStatus(404)
     }
 }
@@ -244,7 +244,7 @@ const getUser = async (req, res) => {
             attributes: { exclude: ['password'] }
         })
         res.status(200).json(user)
-    } catch {
+    } catch (error) {
         res.sendStatus(500)
     }
 }

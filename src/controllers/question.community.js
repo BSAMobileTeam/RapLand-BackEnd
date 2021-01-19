@@ -19,7 +19,7 @@ function authenticateToken(req, res, next) {
             req.user = user.username
             next()
         })
-    } catch {
+    } catch (error) {
         res.sendStatus(500)
     }
 }
@@ -41,7 +41,7 @@ function authenticateAdmin(req, res, next) {
                 res.sendStatus(403)
             }
         })
-    } catch {
+    } catch (error) {
         res.sendStatus(500)
     }
 }

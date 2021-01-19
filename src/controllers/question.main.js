@@ -23,7 +23,7 @@ function authenticateAdmin(req, res, next) {
                 res.sendStatus(403)
             }
         })
-    } catch {
+    } catch (error) {
         res.sendStatus(500)
     }
 }
@@ -142,7 +142,7 @@ const updateQuestion = async (req, res) => {
 	    where: { id: req.query.id }
 	})
 	res.status(200).send(req.body)
-    } catch {
+    } catch (error) {
 	res.sendStatus(404)
     }
 }
@@ -152,7 +152,7 @@ const ping = (req, res) => {
 	res.status(200).json({
 	    "version": VERSION
 	})
-    } catch {
+    } catch (error) {
 	res.sendStatus(500)
     }
 }
