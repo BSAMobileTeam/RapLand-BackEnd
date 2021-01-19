@@ -17,25 +17,25 @@ module.exports = app => {
     router.post(
         '/create',
         checkCreateCommunityQuestion,
-        [validate, communityController.create]
+        [validate, communityController.authenticateToken, communityController.create]
     )
     
     router.post(
         '/createWithArray',
         checkCreateCommunityQuestionWithArray,
-        [validate, communityController.createWithArray]
+        [validate, communityController.authenticateToken, communityController.createWithArray]
     )
 
     router.put(
         '/update',
         checkUpdateCommunityQuestion,
-        [validate, communityController.updateQuestion]
+        [validate, communityController.authenticateToken, communityController.updateQuestion]
     )
     
     router.delete(
         '/deleteById',
         checkDeleteQuestion,
-        [validate, communityController.apiKeyCheck, communityController.deleteById]
+        [validate, communityController.authenticateAdmin, communityController.deleteById]
     )
     
     router.get(

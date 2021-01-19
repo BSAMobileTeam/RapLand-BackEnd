@@ -25,7 +25,7 @@ const checkCreateCommunityQuestion = [
 ]
 
 const checkCreateCommunityQuestionWithArray = [
-    query('apiKey').isString().notEmpty(),
+    //query('apiKey').isString().notEmpty(),
     body('*.id').isEmpty(),
     body('*.author').isString().notEmpty().isLength({min: 1, max: 255}),
     body('*.game').custom(checkGame),

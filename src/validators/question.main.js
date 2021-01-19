@@ -12,7 +12,7 @@ const {
 } = require('./question.index')
 
 const checkCreateQuestion = [
-    query('apiKey').isString().notEmpty(),
+    //query('apiKey').isString().notEmpty(),
     body('id').isEmpty(),
     body('game').custom(checkGame),
     body('gameMode').custom(checkGameMode),
@@ -29,7 +29,7 @@ const checkGetQuestionById = [
 ]
 
 const checkCreateQuestionWithArray = [
-    query('apiKey').isString().notEmpty(),
+    //query('apiKey').isString().notEmpty(),
     body('*.id').isEmpty(),
     body('*.game').custom(checkGame),
     body('*.gameMode').custom(checkGameModeForArray),
@@ -42,7 +42,7 @@ const checkCreateQuestionWithArray = [
 ]
 
 const checkUpdateQuestion = [
-    query('apiKey').isString().notEmpty(),
+    //query('apiKey').isString().notEmpty(),
     query('id').isUUID(4),
     body('game').custom(checkGame).optional(),
     body('gameMode').custom(checkGameMode).optional(),

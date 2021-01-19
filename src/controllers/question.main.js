@@ -1,15 +1,31 @@
 require('dotenv').config()
-const mainDatabase = require('../main.sequelize')
 const Question = require('../models/question.main')
+const User = require('../models/user')
 
-const {API_KEY, VERSION="1.0.1"} = process.env
+const jwt = require('jsonwebtoken')
 
-const apiKeyCheck = (req, res, next) => {    
-	if(req.query.apiKey == API_KEY)
-		next()
-	else {
-		res.sendStatus(401)
-	}
+const {ACCESS_TOKEN_SECRET, VERSION="1.0.1"} = process.env
+
+function authenticateAdmin(req, res, next) {
+    try {
+        const authHeader = req.headers['authorization']
+        const token = authHeader && authHeader.split(' ')[1]
+        if(token == null) return res.sendStatus(401)
+    
+        jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
+            if(err) return res.sendStatus(403)
+            req.id = id
+            const user = await User.findByPk(req.id)
+            req.user = user.username
+            if(user.admin){
+                next()
+            } else {
+                res.sendStatus(403)
+            }
+        })
+    } catch (error) {
+        res.sendStatus(500)
+    }
 }
 
 /**
@@ -126,7 +142,7 @@ const updateQuestion = async (req, res) => {
 	    where: { id: req.query.id }
 	})
 	res.status(200).send(req.body)
-    } catch {
+    } catch (error) {
 	res.sendStatus(404)
     }
 }
@@ -136,13 +152,13 @@ const ping = (req, res) => {
 	res.status(200).json({
 	    "version": VERSION
 	})
-    } catch {
+    } catch (error) {
 	res.sendStatus(500)
     }
 }
 
 module.exports = {
-    apiKeyCheck,
+    authenticateAdmin,
     create,
     getById,
     getAll,
