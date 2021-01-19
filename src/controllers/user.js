@@ -142,7 +142,13 @@ const create = async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
 
-        if(true){ //check duplicate
+        if(User.findOne({ where: { email: req.body.email } }) !== null){
+            res.sendStatus(403).send('Email address already used')
+        }
+        else if(User.findOne({ where: { username: req.body.username } }) !== null){
+            res.sendStatus(403).send('Username already used')
+        }
+        else{ //check duplicate
             const newUser = await User.create({
                 "email": req.body.email,
                 "password": hashedPassword,
@@ -151,8 +157,6 @@ const create = async (req, res) => {
             })
             const accessToken = generateAccessToken(newUser.id)
             res.status(201).json(accessToken)
-        } else {
-            res.sendStatus(401).send('Duplicate')
         }
     } catch (error) {
         res.sendStatus(401)
