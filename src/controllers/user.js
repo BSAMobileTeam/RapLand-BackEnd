@@ -162,8 +162,9 @@ const deleteById = async (req, res) => {
         if(admin.admin){
             await user.destroy()
             res.status(200).send('Deleted')
+        } else {
+            res.sendStatus(403)
         }
-        res.sendStatus(403)
     } catch (error) {
         res.sendStatus(404)
     }
@@ -171,15 +172,15 @@ const deleteById = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        const users = await ( await User.findAll()).map(user => {
-            delete user.password
-            return user
+        const users = await User.findAll({
+            attributes: { exclude: ['password'] }
         })
         const admin = await User.findByPk(req.id)
         if(admin.admin){
             res.status(200).json(users)
+        } else {
+            res.sendStatus(403)
         }
-        res.sendStatus(403)
     } catch (error) {
         res.sendStatus(404)
     }
@@ -187,12 +188,16 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
     try {
-        const user = await User.findByPk(req.query.id)
+        const user = await User.findOne({
+            where: { id: req.query.id },
+            attributes: { exclude: ['password'] }
+        })
         const admin = await User.findByPk(req.id)
         if(admin.admin){
             res.status(200).json(user)
+        } else {
+            res.sendStatus(403)
         }
-        res.sendStatus(403)
     } catch (error) {
         res.sendStatus(404)
     }
@@ -200,14 +205,16 @@ const getById = async (req, res) => {
 
 const getByUsername = async (req, res) => {
     try {
-        const user = await User.findAll({
-            where: {username:req.query.username}
+        const user = await User.findOne({
+            where: { username: req.query.username },
+            attributes: { exclude: ['password'] }
         })
         const admin = await User.findByPk(req.id)
         if(admin.admin){
             res.status(200).json(user)
+        } else {
+            res.sendStatus(403)
         }
-        res.sendStatus(403)
     } catch (error) {
         res.sendStatus(404)
     }
@@ -215,14 +222,16 @@ const getByUsername = async (req, res) => {
 
 const getByEmail = async (req, res) => {
     try {
-        const user = await User.findAll({
-            where: {email:req.query.email}
+        const user = await User.findOne({
+            where: { email: req.query.email },
+            attributes: { exclude: ['password'] }
         })
         const admin = await User.findByPk(req.id)
         if(admin.admin){
             res.status(200).json(user)
+        } else {
+            res.sendStatus(403)
         }
-        res.sendStatus(403)
     } catch (error) {
         res.sendStatus(404)
     }
@@ -230,7 +239,10 @@ const getByEmail = async (req, res) => {
 
 const getUser = async (req, res) => {
     try {
-        const user = await User.findByPk(req.id)
+        const user = await User.findOne({
+            where: { id: req.id },
+            attributes: { exclude: ['password'] }
+        })
         res.status(200).json(user)
     } catch {
         res.sendStatus(500)
