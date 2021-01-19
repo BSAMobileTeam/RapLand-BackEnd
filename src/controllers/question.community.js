@@ -2,6 +2,8 @@ require('dotenv').config()
 const communityQuestion = require('../models/question.community')
 const User = require('../models/user')
 
+const jwt = require('jsonwebtoken')
+
 const {ACCESS_TOKEN_SECRET, VERSION="1.0.1"} = process.env
 
 function authenticateToken(req, res, next) {

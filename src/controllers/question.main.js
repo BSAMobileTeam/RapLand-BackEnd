@@ -2,6 +2,7 @@ require('dotenv').config()
 const Question = require('../models/question.main')
 const User = require('../models/user')
 
+const jwt = require('jsonwebtoken')
 
 const {ACCESS_TOKEN_SECRET, VERSION="1.0.1"} = process.env
 
