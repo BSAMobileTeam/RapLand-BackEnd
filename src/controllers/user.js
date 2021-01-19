@@ -141,16 +141,13 @@ const count = async (req, res) => {
 const create = async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        const user = {}
-        if((user = User.findOne({ where: { email: req.body.email } })) !== null){
-            console.log(user)
-            res.sendStatus(403).send('Email address already used')
-        }
-        else if((user = User.findOne({ where: { username: req.body.username } })) !== null){
-            console.log(user)
-            res.sendStatus(403).send('Username already used')
-        }
-        else{ //check duplicate
+        if((await User.findOne({ where: { email: req.body.email }})) !== null){
+		res.status(403).send("Email adress already used")
+	}
+	else if((await User.findOne({ where: { username: req.body.username }})) !== null){
+		res.status(403).send("Username already used")
+	}
+        else{
             const newUser = await User.create({
                 "email": req.body.email,
                 "password": hashedPassword,
