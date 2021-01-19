@@ -37,12 +37,10 @@ function authenticateAdmin(req, res, next) {
 
 const create = async (req, res) => {
     try {
-        const questions = await (await Question.findAll()).map(question => {
-            delete question.id
-            delete question.createdAt
-            delete question.updatedAt
-            return question
+        const questions = await  Question.findAll({
+            attributes: { exclude: ['id'] }
         })
+        console.log(questions)
         if(!(req.body in questions)){
             const newQuestion = await Question.create(req.body)
             res.status(201).json(newQuestion)
