@@ -1,6 +1,8 @@
 const { validate } = require('../validators/index')
 const {
-    checkCreateCommunityQuestion
+    checkCreateCommunityQuestion,
+    checkCreateCommunityQuestionWithArray,
+    checkUpdateCommunityQuestion
 } = require('../validators/question.community')
 const {
     checkDeleteQuestion
@@ -18,18 +20,23 @@ module.exports = app => {
         [validate, communityController.create]
     )
     
-    router.post('/createWithArray', communityController.createWithArray)
+    router.post(
+        '/createWithArray',
+        checkCreateCommunityQuestionWithArray,
+        [validate, communityController.createWithArray]
+    )
 
-    router.put('/update', communityController.updateQuestion)
+    router.put(
+        '/update',
+        checkUpdateCommunityQuestion,
+        [validate, communityController.updateQuestion]
+    )
     
     router.delete(
         '/deleteById',
         checkDeleteQuestion,
         [validate, communityController.apiKeyCheck, communityController.deleteById]
     )
-    
-    //TODO: move this
-    router.get('/ping', communityController.ping)
     
     router.get(
         '/getById',
@@ -39,6 +46,8 @@ module.exports = app => {
     
     router.get('/getAll', communityController.getAll)
     
+
+    //TODO: remove this
     router.get('/getMixedArray', communityController.getMixedArray)
     
     router.get('/count', communityController.getCount)
