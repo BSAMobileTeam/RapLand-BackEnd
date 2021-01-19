@@ -3,7 +3,9 @@ const { validate } = require('../validators/index');
 const {
     checkCreateQuestion,
     checkGetQuestionById,
-    checkCreateQuestionWithArray,    
+    checkCreateQuestionWithArray,
+    checkUpdateQuestion,
+    checkedGetMixedQuestionArray
 } = require('../validators/question.main')
 const { checkDeleteQuestion } = require('../validators/question.index')
 
@@ -24,8 +26,8 @@ module.exports = app => {
     
     router.put(
         '/update',
-        
-        [mainController.apiKeyCheck, mainController.updateQuestion]
+        checkUpdateQuestion,
+        [validate, mainController.apiKeyCheck, mainController.updateQuestion]
     )
 
     router.delete(
@@ -40,7 +42,11 @@ module.exports = app => {
         [validate, mainController.getById]
     )
 
-    router.get('/getMixedArray', mainController.getMixedArray)
+    router.get(
+        '/getMixedArray',
+        checkedGetMixedQuestionArray,
+        [validate, mainController.getMixedArray]
+    )
     
     router.get('/getAll', mainController.getAll)
     

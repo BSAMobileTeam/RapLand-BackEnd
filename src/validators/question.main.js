@@ -6,6 +6,7 @@ const {
     checkGameModeForArray,
     checkChoices,
     checkAnswers,
+    checkAnswersForArray,
     checkQuestionType,
     checkMediaType
 } = require('./question.index')
@@ -35,7 +36,7 @@ const checkCreateQuestionWithArray = [
     body('*.type').custom(checkQuestionType),
     body('*.title').isString().notEmpty().isLength({min: 1, max: 255}),
     body('*.choices').custom(checkChoices),
-    body('*.answers').custom(checkAnswers),
+    body('*.answers').custom(checkAnswersForArray),
     body('*.mediaType').custom(checkMediaType).optional(),
     body('*.mediaUrl').isURL().optional()
 ]
@@ -53,9 +54,15 @@ const checkUpdateQuestion = [
     body('mediaUrl').isURL().optional()
 ]
 
+//TODO: set max value
+const checkedGetMixedQuestionArray = [
+    query('length').isNumeric().optional()
+]
+
 module.exports = {
     checkCreateQuestion,
     checkGetQuestionById,
     checkCreateQuestionWithArray,
-    checkUpdateQuestion
+    checkUpdateQuestion,
+    checkedGetMixedQuestionArray
 }

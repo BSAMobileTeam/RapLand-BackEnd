@@ -95,7 +95,28 @@ const checkChoices = value => {
     return true
 }
 
-const checkAnswers = (value, { req, _, path }) => {
+const checkAnswers = (value, { req }) => {
+    if (!req.body["choices"]) {
+        throw new Error('There is no choices')
+    }
+    if (checkChoices(req.body["choices"]) !== true) {
+        throw new Error('There is an error in the choices')
+    }
+    if (!Array.isArray(value)) {
+        throw new Error('answers is not an array')
+    }
+    if (value.length < 1) {
+        throw new Error('answers must have at least one element')
+    }
+    value.forEach(v => {        
+        if (!req.body["choices"].includes(v)) {
+            throw new Error(`This answer is not in the choices array: ${v}`)
+        }
+    })
+    return true
+}
+
+const checkAnswersForArray = (value, {req, _, path}) => {
     const index = parseInt(path.substring(1, path.indexOf(']')))
     if (!req.body[index]["choices"]) {
         throw new Error('There is no choices')
@@ -149,6 +170,7 @@ module.exports = {
     checkGameModeForArray,
     checkChoices,
     checkAnswers,
+    checkAnswersForArray,
     checkQuestionType,
     checkMediaType,
     checkDeleteQuestion
