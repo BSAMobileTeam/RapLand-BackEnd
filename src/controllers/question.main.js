@@ -16,8 +16,9 @@ function authenticateAdmin(req, res, next) {
             if(err) return res.sendStatus(403)
             req.id = id
             const user = await User.findByPk(req.id)
-            req.user = user.username
-            if(user !== null && user.admin){
+            if(user == null){
+                res.sendStatus(404)
+            } else if(user.admin){
                 req.user = user.username
                 next()
             } else {

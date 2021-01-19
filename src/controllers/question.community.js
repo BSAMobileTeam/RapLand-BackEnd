@@ -20,7 +20,7 @@ function authenticateToken(req, res, next) {
                 req.user = user.username
                 next()
             } else {
-                res.sendStatus(403)
+                res.sendStatus(404)
             }
         })
     } catch (error) {
@@ -38,7 +38,9 @@ function authenticateAdmin(req, res, next) {
             if(err) return res.sendStatus(403)
             req.id = id
             const user = await User.findByPk(req.id)
-            if(user !== null && user.admin){
+            if(user == null){
+                res.sendStatus(404)
+            } else if(user.admin){
                 req.user = user.username
                 next()
             } else {
