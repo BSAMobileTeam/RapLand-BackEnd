@@ -30,22 +30,14 @@ function authenticateAdmin(req, res, next) {
     }
 }
 
-/**
- * for create and create withArray
- * check if question does not already exists
- */
-
 const create = async (req, res) => {
     try {
-        const questions = await  Question.findAll({
-            attributes: { exclude: ['id'] }
-        })
-        console.log(questions)
-        if(!(req.body in questions)){
+        const questions = await  Question.findAll()
+        if((await Question.findOne({ where: { title: req.body.title }})) == null){
             const newQuestion = await Question.create(req.body)
             res.status(201).json(newQuestion)
         } else {
-            res.sendStatus(401).send('Duplicate')
+            res.status(401).send('Duplicate')
         }
     } catch (error) {
         res.sendStatus(401)
