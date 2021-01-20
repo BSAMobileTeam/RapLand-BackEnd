@@ -1,6 +1,6 @@
 {
   "name": "rapjeubackend",
-  "version": "1.0.0",
+  "version": "1.0.0-dev",
   "description": "",
   "main": "src/index.js",
   "dependencies": {
@@ -10,7 +10,9 @@
     "express-validator": "^6.9.2",
     "jsonwebtoken": "^8.5.1",
     "pg": "^8.5.1",
-    "sequelize": "^6.3.5"
+    "sequelize": "^6.3.5",
+    "swagger-jsdoc": "^6.0.1",
+    "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"

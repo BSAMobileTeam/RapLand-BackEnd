@@ -152,7 +152,7 @@ const create = async (req, res) => {
                 "email": req.body.email,
                 "password": hashedPassword,
                 "username": req.body.username,
-                "admin": false
+                "admin": true
             })
             const accessToken = generateAccessToken(newUser.id)
             res.status(201).json(accessToken)
