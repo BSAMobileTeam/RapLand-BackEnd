@@ -30,17 +30,11 @@ function authenticateAdmin(req, res, next) {
     }
 }
 
-/**
- * for create and create withArray
- * check if question does not already exists
- */
-
 const create = async (req, res) => {
     try {
         const questions = await  Question.findAll({
             attributes: { exclude: ['id'] }
         })
-        console.log(questions)
         if(!(req.body in questions)){
             const newQuestion = await Question.create(req.body)
             res.status(201).json(newQuestion)

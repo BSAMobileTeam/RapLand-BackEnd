@@ -52,23 +52,13 @@ function authenticateAdmin(req, res, next) {
     }
 }
 
-/**
- * for create and create withArray
- * check if question does not already exists
- */
-
 const create = async (req, res) => {
     try {
-        const questions = await (await communityQuestion.findAll()).map(question => {
-            delete question.id
-            delete question.createdAt
-            delete question.updatedAt
-            return question
+        const questions = await  Question.findAll({
+            attributes: { exclude: ['id'] }
         })
-        console.log(req.body.title)
-        console.log(questions)
         if(!(req.body in questions)){
-            const newQuestion = await communityQuestion.create(req.body)
+            const newQuestion = await Question.create(req.body)
             res.status(201).json(newQuestion)
         } else {
             res.sendStatus(401).send('Duplicate')
@@ -77,7 +67,6 @@ const create = async (req, res) => {
         res.sendStatus(401)
     }
 }
-
 
 /***
  * TODO: return not found if nout found instead of null
