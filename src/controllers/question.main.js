@@ -71,16 +71,12 @@ const getAll = async (req, res) => {
 const getMixedArray = async (req, res) => {
     try {
         const totalLenght = (await Question.findAll()).length
-        console.log("totalLength: " + totalLenght)
         const maxLength = (totalLenght > 0 && totalLenght <= 30) ? totalLenght : 30
-        console.log("maxLength;" + maxLength)
         const length = (req.query.length && req.query.length > 0 && req.query.length <= 50 && req.query.length <= maxLength) ? req.query.length : maxLength
-        console.log("length:" + length)
         const mixedArray = []
         const questions = await Question.findAll()
 
-        while (mixedArray.length <= length) {
-            console.log("tab:" + mixedArray.length + "/" + length)
+        while (mixedArray.length < length) {
             const newQuestion = questions[Math.floor(Math.random() * questions.length)]
             if (!(newQuestion in mixedArray)) {
                 mixedArray.push(newQuestion)
