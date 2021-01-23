@@ -12,6 +12,7 @@ const {
 } = require('./question.index')
 
 const checkCreateQuestion = [
+    header('authorization').exists(),
     body('id').isEmpty(),
     body('game').custom(checkGame),
     body('gameMode').custom(checkGameMode),
@@ -28,6 +29,7 @@ const checkGetQuestionById = [
 ]
 
 const checkCreateQuestionWithArray = [
+    header('authorization').exists(),
     body('*.id').isEmpty(),
     body('*.game').custom(checkGame),
     body('*.gameMode').custom(checkGameModeForArray),
@@ -40,6 +42,7 @@ const checkCreateQuestionWithArray = [
 ]
 
 const checkUpdateQuestion = [
+    header('authorization').exists(),
     query('id').isUUID(4),
     body('game').custom(checkGame).optional(),
     body('gameMode').custom(checkGameMode).optional(),
