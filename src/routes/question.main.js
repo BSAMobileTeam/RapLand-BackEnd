@@ -5,7 +5,7 @@ const {
     checkGetQuestionById,
     checkCreateQuestionWithArray,
     checkUpdateQuestion,
-    checkedGetMixedQuestionArray
+    checkGetMixedQuestionArray
 } = require('../validators/question.main')
 const { checkDeleteQuestion } = require('../validators/question.index')
 
@@ -35,7 +35,7 @@ module.exports = app => {
         checkDeleteQuestion,
         [validate, mainController.authenticateAdmin, mainController.deleteById]
     )
- 
+
     router.get(
         '/getById',
         checkGetQuestionById,
