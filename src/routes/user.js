@@ -11,26 +11,24 @@ module.exports = app => {
     router.post('/login', userController.login)
         
     router.delete('/logout', userController.logout)
-
-    // Admin
     
-    router.delete('/deleteById', userController.authenticateToken, userController.deleteById)
+    router.delete('/deleteById', userController.authenticateAdmin, userController.deleteById)
 
-    router.get('/getByUsername', userController.authenticateToken, userController.getByUsername)
+    router.get('/getByUsername', userController.authenticateAdmin, userController.getByUsername)
 
-    router.get('/getByEmail', userController.authenticateToken, userController.getByEmail)
+    router.get('/getByEmail', userController.authenticateAdmin, userController.getByEmail)
     
-    router.get('/getById', userController.authenticateToken, userController.getById)
+    router.get('/getById', userController.authenticateAdmin, userController.getById)
         
-    router.get('/getAll', userController.authenticateToken, userController.getAll)
+    router.get('/getAll', userController.authenticateAdmin, userController.getAll)
     
-    router.get('/count', userController.authenticateToken, userController.count)
+    router.get('/count', userController.authenticateAdmin, userController.count)
     
-    router.put('/updateUser', userController.authenticateToken, userController.updateUser)
+    router.put('/updateUser', userController.authenticateAdmin, userController.updateUser)
 
-	router.put('/updateUserById', userController.authenticateToken, userController.updateUserById)
+	router.put('/updateUserById', userController.authenticateAdmin, userController.updateUserById)
     
-    router.put('/changeAdmin', userController.authenticateToken, userController.changeAdmin)
+    router.put('/changeAdmin', userController.authenticateAdmin, userController.changeAdmin)
 
     app.use('/user', router)
 }

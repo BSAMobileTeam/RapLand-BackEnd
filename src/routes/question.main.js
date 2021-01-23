@@ -44,7 +44,7 @@ module.exports = app => {
 
     router.get(
         '/getMixedArray',
-        checkedGetMixedQuestionArray,
+        checkGetMixedQuestionArray,
         [validate, mainController.getMixedArray]
     )
     
