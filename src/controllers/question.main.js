@@ -70,7 +70,7 @@ const getAll = async (req, res) => {
 
 const getMixedArray = async (req, res) => {
     try {
-        const totalLenght = parseInt(getCount())
+        const totalLenght = (await Question.findAll()).length
         console.log("totalLength: " + totalLenght)
         const maxLength = (totalLenght > 0 && totalLenght <= 30) ? totalLenght : 30
         console.log("maxLength;" + maxLength)
