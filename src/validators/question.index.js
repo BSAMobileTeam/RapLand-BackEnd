@@ -159,7 +159,7 @@ const checkMediaType = value => {
 }
 
 const checkDeleteQuestion = [
-    query('apiKey').isString().notEmpty(),
+    //query('apiKey').isString().notEmpty(),
     query('id').isUUID(4)
 ]
 

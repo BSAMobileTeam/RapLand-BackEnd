@@ -71,12 +71,16 @@ const getAll = async (req, res) => {
 const getMixedArray = async (req, res) => {
     try {
         const totalLenght = parseInt(getCount())
+        console.log("totalLength: " + totalLenght)
         const maxLength = (totalLenght > 0 && totalLenght <= 30) ? totalLenght : 30
+        console.log("maxLength;" + maxLength)
         const length = (req.query.length && req.query.length > 0 && req.query.length <= 50 && req.query.length <= maxLength) ? req.query.length : maxLength
+        console.log("length:" + length)
         const mixedArray = []
         const questions = await Question.findAll()
 
         while (mixedArray.length <= length) {
+            console.log("tab:" + mixedArray.length + "/" + length)
             const newQuestion = questions[Math.floor(Math.random() * questions.length)]
             if (!(newQuestion in mixedArray)) {
                 mixedArray.push(newQuestion)
@@ -91,24 +95,12 @@ const getMixedArray = async (req, res) => {
 const createWithArray = async (req, res) => {
     try {
         const array = []
-        /*const questions = await (await Question.findAll()).map(question => {
-            delete question.id
-            return question
-        })*/
-
         for (const question of req.body) {
             if((await Question.findOne({ where: { title: question.title } })) == null){
                 array.push(await Question.create(question))
             } else {
                 array.push({ "error": "Duplicate"})
             }
-            
-            
-            /*await sequelize.transaction(async tran => {
-                if (!(question in  questions)) {
-                    array.push(await Question.create(question, { transaction: tran }))
-                }
-            })*/
         }
         return res.status(201).json(array)
     } catch (error) {
