@@ -10,13 +10,15 @@ function authenticateAdmin(req, res, next) {
     try {
         const authHeader = req.headers['authorization']
         const token = authHeader && authHeader.split(' ')[1]
-        if(token == null) return res.sendStatus(401)
-    
+        
+        if(token === null)
+            return res.sendStatus(401)
         jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
-            if(err) return res.sendStatus(403)
+            if(err)
+                return res.sendStatus(403)
             req.id = id
             const user = await User.findByPk(req.id)
-            if(user == null){
+            if(user == null) {
                 res.sendStatus(404)
             } else if(user.admin){
                 req.user = user.username
@@ -25,19 +27,19 @@ function authenticateAdmin(req, res, next) {
                 res.sendStatus(403)
             }
         })
-    } catch (error) {
+    }
+    catch (error) {
         res.sendStatus(500)
     }
 }
 
 const create = async (req, res) => {
     try {
-        const questions = await  Question.findAll()
-        if((await Question.findOne({ where: { title: req.body.title }})) == null){
+        if ((await Question.findOne({ where: { title: req.body.title }})) === null) {
             const newQuestion = await Question.create(req.body)
             res.status(201).json(newQuestion)
         } else {
-            res.status(401).send('Duplicate')
+            res.status(401).send('This question already exists')
         }
     } catch (error) {
         res.sendStatus(401)
