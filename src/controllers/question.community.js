@@ -89,7 +89,8 @@ const getAll = async (req, res) => {
 
 const getMixedArray = async (req, res) => {
     try {
-        const totalLenght = (await communityQuestion.findAll()).length
+        const error = false
+        const totalLenght = (await Question.findAll()).length
         const maxLength = (totalLenght > 0 && totalLenght <= 30) ? totalLenght : 30
         const length = (req.query.length && req.query.length > 0 && req.query.length <= 50 && req.query.length <= maxLength) ? req.query.length : maxLength
         const mixedArray = []
@@ -99,9 +100,10 @@ const getMixedArray = async (req, res) => {
             const newQuestion = questions[Math.floor(Math.random() * questions.length)]
             if (!(newQuestion in mixedArray)) {
                 mixedArray.push(newQuestion)
+                error = true
             }
         }
-        res.status(200).json(mixedArray)
+        error ? res.status(206).json(mixedArray) : res.status(201).json(mixedArray)
     } catch (error) {
         res.sendStatus(404)
     }
