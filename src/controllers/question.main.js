@@ -35,14 +35,12 @@ function authenticateAdmin(req, res, next) {
 
 const create = async (req, res) => {
     try {
-        if ((await Question.findOne({ where: { title: req.body.title }})) === null) {
-            const newQuestion = await Question.create(req.body)
-            res.status(201).json(newQuestion)
-        } else {
-            res.status(401).send('This question already exists')
-        }
+        return res.status(201).json(await Question.create(req.body))
     } catch (error) {
-        res.sendStatus(401)
+        if (error.name === "SequelizeUniqueConstraintError") {
+            return res.status(409).send(`The question "${req.body.title}" already exists`)
+        }
+        return res.sendStatus(424)
     }
 }
 
@@ -93,7 +91,7 @@ const createWithArray = async (req, res) => {
         //const error = false
         const array = []
         for (const question of req.body) {
-            if((await Question.findOne({ where: { title: question.title } })) == null){
+            if((await Question.findOne({ where: { title: question.title } })) == null) {
                 array.push(await Question.create(question))
             } else {
                 array.push({ "error": "Duplicate"})

@@ -4,7 +4,7 @@ const { Sequelize } = require('sequelize')
 // Creates Sequelize instance
 const communityDatabase = new Sequelize('community', 'community', 'community', {
   host: 'localhost',
-  port: 5433,
+  port: 5434,
   dialect: 'postgres',
   pool: {
     min: 0,

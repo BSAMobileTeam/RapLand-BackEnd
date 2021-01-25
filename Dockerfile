@@ -1,3 +1,5 @@
+# sudo docker build -t service .
+
 FROM node:14-alpine
 
 WORKDIR /usr/src/app
