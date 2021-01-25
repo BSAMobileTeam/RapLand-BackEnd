@@ -123,10 +123,9 @@ const deleteById = async (req, res) => {
 
 const getCount = async (req, res) => {
     try {
-        const questions = await Question.findAll()
-        res.status(200).send(""+questions.length)
+        return res.status(200).send(await Question.count())
     } catch (error) {
-        res.sendStatus(500)
+        return res.sendStatus(500)
     }
 }
 

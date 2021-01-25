@@ -6,6 +6,7 @@ const mainDatabase = new Sequelize('rapjeu', 'rapjeu', 'rapjeu', {
   host: 'localhost',
   port: 5432,
   dialect: 'postgres',
+  storage: './database.sqlite',
   pool: {
     min: 0,
     max: 5,
