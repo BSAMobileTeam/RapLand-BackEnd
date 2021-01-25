@@ -90,17 +90,18 @@ const getMixedArray = async (req, res) => {
 
 const createWithArray = async (req, res) => {
     try {
-        const error = false
+        //const error = false
         const array = []
         for (const question of req.body) {
             if((await Question.findOne({ where: { title: question.title } })) == null){
                 array.push(await Question.create(question))
             } else {
                 array.push({ "error": "Duplicate"})
-                error = true
+                //error = true
             }
         }
-        error ? res.status(206).json(array) : res.status(201).json(array)
+        res.status(201).json(array)
+        //error ? res.status(206).json(array) : res.status(201).json(array)
     } catch (error) {
         res.sendStatus(401)
     }
