@@ -5,14 +5,16 @@ const { Sequelize } = require('sequelize')
 const communityDatabase = new Sequelize('community', 'community', 'community', {
   host: 'localhost',
   port: 5434,
-  dialect: 'postgres',
-  timestamps: false,
+  dialect: 'postgres',  
   pool: {
     min: 0,
     max: 5,
     acquire: 60000,
     idle: 10000,
     evict: 1000
+  },
+  define: {
+    timestamps: false
   }
 });
 
