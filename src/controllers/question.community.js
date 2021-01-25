@@ -89,7 +89,6 @@ const getAll = async (req, res) => {
 
 const getMixedArray = async (req, res) => {
     try {
-        const error = false
         const totalLenght = (await Question.findAll()).length
         const maxLength = (totalLenght > 0 && totalLenght <= 30) ? totalLenght : 30
         const length = (req.query.length && req.query.length > 0 && req.query.length <= 50 && req.query.length <= maxLength) ? req.query.length : maxLength
@@ -100,10 +99,9 @@ const getMixedArray = async (req, res) => {
             const newQuestion = questions[Math.floor(Math.random() * questions.length)]
             if (!(newQuestion in mixedArray)) {
                 mixedArray.push(newQuestion)
-                error = true
             }
         }
-        error ? res.status(206).json(mixedArray) : res.status(201).json(mixedArray)
+        res.status(201).json(mixedArray)
     } catch (error) {
         res.sendStatus(404)
     }
@@ -111,15 +109,17 @@ const getMixedArray = async (req, res) => {
 
 const createWithArray = async (req, res) => {
     try {
+        const error = false
         const array = []
         for (const question of req.body) {
             if((await communityQuestion.findOne({ where: { title: question.title } })) == null){
                 array.push(await communityQuestion.create(question))
             } else {
                 array.push({ "error": "Duplicate"})
+                error = true
             }
         }
-        return res.status(201).json(array)
+        error ? res.status(206).json(mixedArray) : res.status(201).json(mixedArray)
     } catch (error) {
         res.sendStatus(401)
     }
