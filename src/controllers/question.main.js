@@ -93,7 +93,7 @@ const createWithArray = async (req, res) => {
         const error = false
         const array = []
         for (const question of req.body) {
-            if((await communityQuestion.findOne({ where: { title: question.title } })) == null){
+            if((await Question.findOne({ where: { title: question.title } })) == null){
                 array.push(await Question.create(question))
             } else {
                 array.push({ "error": "Duplicate"})
