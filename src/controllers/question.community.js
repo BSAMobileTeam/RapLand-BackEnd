@@ -119,7 +119,7 @@ const createWithArray = async (req, res) => {
                 error = true
             }
         }
-        error ? res.status(206).json(mixedArray) : res.status(201).json(mixedArray)
+        error ? res.status(206).json(array) : res.status(201).json(array)
     } catch (error) {
         res.sendStatus(401)
     }
