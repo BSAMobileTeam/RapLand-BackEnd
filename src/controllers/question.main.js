@@ -85,7 +85,7 @@ const getMixedArray = async (req, res) => {
             if (mixedArray.includes(newQuestion) === false) {
                 mixedArray.push(newQuestion)
             }
-        }        
+        }
         return res.status(200).json(mixedArray)
     } catch (error) {
        return res.sendStatus(500)

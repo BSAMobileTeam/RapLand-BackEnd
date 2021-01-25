@@ -6,6 +6,7 @@ const communityDatabase = new Sequelize('community', 'community', 'community', {
   host: 'localhost',
   port: 5434,
   dialect: 'postgres',
+  timestamps: false,
   pool: {
     min: 0,
     max: 5,

@@ -12,6 +12,9 @@ const mainDatabase = new Sequelize('rapjeu', 'rapjeu', 'rapjeu', {
     acquire: 60000,
     idle: 10000,
     evict: 1000
+  },
+  define: {
+    timestamps: false
   }
 });
 
