@@ -11,14 +11,8 @@ function authenticateAdmin(req, res, next) {
         const authHeader = req.headers['authorization']
         const token = authHeader && authHeader.split(' ')[1]
         
-<<<<<<< HEAD
         if(token === null)
             return res.sendStatus(401)
-=======
-        if(token == null) 
-            return res.sendStatus(401)
-    
->>>>>>> 01f68bf729d11900299f50826f3daebd13631d3d
         jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
             if(err)
                 return res.sendStatus(403)
@@ -41,11 +35,7 @@ function authenticateAdmin(req, res, next) {
 
 const create = async (req, res) => {
     try {
-<<<<<<< HEAD
         if ((await Question.findOne({ where: { title: req.body.title }})) === null) {
-=======
-        if((await Question.findOne({ where: { title: req.body.title }})) == null){
->>>>>>> 01f68bf729d11900299f50826f3daebd13631d3d
             const newQuestion = await Question.create(req.body)
             res.status(201).json(newQuestion)
         } else {
