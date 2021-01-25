@@ -4,7 +4,12 @@ const User = require('../models/user')
 
 const jwt = require('jsonwebtoken')
 
-const {ACCESS_TOKEN_SECRET, VERSION="1.0.1"} = process.env
+const {
+    ACCESS_TOKEN_SECRET,
+    VERSION="1.0.1",
+    DEFAULT_MIXED_ARRAY_LENGTH,
+    GET_MIXED_ARRAY_MAX_EXECUTION_TIME_MS
+} = process.env
 
 function authenticateAdmin(req, res, next) {
     try {
@@ -28,7 +33,7 @@ function authenticateAdmin(req, res, next) {
             }
         })
     }
-    catch (error) {
+    catch {
         res.sendStatus(500)
     }
 }
@@ -48,7 +53,7 @@ const getById = async (req, res) => {
     try {
         const question = await Question.findByPk(req.query.id)
         return question !== null ? res.status(200).json(question) : res.status(404).send("This question ID doesn't exists")
-    } catch (error) {
+    } catch {
         return res.sendStatus(500)
     }
 }
@@ -58,27 +63,32 @@ const getAll = async (req, res) => {
         const questions = await Question.findAll()
         return questions.length > 0 ? res.status(200).json(questions) : res.status(404).send("There are no available questions")
     } catch (error) {
-        res.sendStatus(500)
+        return res.sendStatus(500)
     }
 }
 
 const getMixedArray = async (req, res) => {
     try {
-        const totalLenght = (await Question.findAll()).length
-        const maxLength = (totalLenght > 0 && totalLenght <= 30) ? totalLenght : 30
-        const length = (req.query.length && req.query.length > 0 && req.query.length <= 50 && req.query.length <= maxLength) ? req.query.length : maxLength
-        const mixedArray = []
         const questions = await Question.findAll()
-        
+        if (questions.length <= 0) {
+            return res.send(404).send("There are no available questions")
+        }
+        const length = req.query.length <= questions.length ? req.query.length : DEFAULT_MIXED_ARRAY_LENGTH
+        const mixedArray = []
+        const startDate = Date.now()
+
         while (mixedArray.length < length) {
+            if (Date.now() - startDate >= GET_MIXED_ARRAY_MAX_EXECUTION_TIME_MS) {
+                return res.status(504).send(`Can't generate a mixed array in less than ${GET_MIXED_ARRAY_MAX_EXECUTION_TIME_MS} milliseconds. Try with a smaller size.`)
+            }
             const newQuestion = questions[Math.floor(Math.random() * questions.length)]
-            if (!(newQuestion in mixedArray)) {
+            if (mixedArray.includes(newQuestion) === false) {
                 mixedArray.push(newQuestion)
             }
-        }
-        res.status(201).json(mixedArray)
+        }        
+        return res.status(200).json(mixedArray)
     } catch (error) {
-        res.sendStatus(404)
+       return res.sendStatus(500)
     }
 }
 
