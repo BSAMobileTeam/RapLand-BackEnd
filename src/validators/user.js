@@ -1,4 +1,4 @@
-const { body, query } = require('express-validator');
+const { body, query, header } = require('express-validator');
 
 const checkGetUser = [
     header('authorization').exists()
