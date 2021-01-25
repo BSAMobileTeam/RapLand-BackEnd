@@ -40,29 +40,25 @@ const create = async (req, res) => {
         if (error.name === "SequelizeUniqueConstraintError") {
             return res.status(409).send(`The question "${req.body.title}" already exists`)
         }
-        return res.sendStatus(424)
+        return res.sendStatus(500)
     }
 }
 
 const getById = async (req, res) => {
     try {
-        const question = {}
-        if((question = await Question.findByPk(req.query.id)) != null){
-            res.status(200).json(question)
-        } else {
-            res.sendStatus(400)
-        }
+        const question = await Question.findByPk(req.query.id)
+        return question !== null ? res.status(200).json(question) : res.status(404).send("This question ID doesn't exists")
     } catch (error) {
-        res.sendStatus(404)
+        return res.sendStatus(500)
     }
 }
 
 const getAll = async (req, res) => {
     try {
         const questions = await Question.findAll()
-        res.status(200).json(questions)
+        return questions.length > 0 ? res.status(200).json(questions) : res.status(404).send("There are no available questions")
     } catch (error) {
-        res.sendStatus(404)
+        res.sendStatus(500)
     }
 }
 
