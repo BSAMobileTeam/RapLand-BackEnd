@@ -10,7 +10,8 @@ const {
     checkGetById,
     checkUpdateUser,
     checkUpdateUserById,
-    checkChangeAdmin
+    checkChangeAdmin,
+    checkCount
 } = require('../validators/user')
 
 module.exports = app => {
@@ -66,7 +67,8 @@ module.exports = app => {
         [validate, userController.authenticateAdmin, userController.getAll])
     
     router.get(
-        '/count', 
+        '/count',
+        checkCount, 
         [validate, userController.authenticateAdmin, userController.count])
     
     router.put(

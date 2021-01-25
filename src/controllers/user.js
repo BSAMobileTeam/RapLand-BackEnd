@@ -158,8 +158,9 @@ const count = async (req, res) => {
         const admin = await User.findByPk(req.id)
         if(admin.admin){
             res.status(200).send(""+users.length)
+        } else{ 
+            res.sendStatus(403)
         }
-        res.sendStatus(403)
     } catch (error) {
         res.sendStatus(500)
     }
