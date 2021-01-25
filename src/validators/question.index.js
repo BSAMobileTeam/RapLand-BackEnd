@@ -1,5 +1,5 @@
 
-const { query } = require('express-validator')
+const { query, header } = require('express-validator')
 
 const questionTypes = [
     'opened',
@@ -159,7 +159,7 @@ const checkMediaType = value => {
 }
 
 const checkDeleteQuestion = [
-    query('apiKey').isString().notEmpty(),
+    header('authorization').exists(),
     query('id').isUUID(4)
 ]
 

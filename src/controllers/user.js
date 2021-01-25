@@ -28,6 +28,33 @@ function authenticateToken(req, res, next) {
     }
 }
 
+function authenticateAdmin(req, res, next) {
+    try {
+        const authHeader = req.headers['authorization']
+        const token = authHeader && authHeader.split(' ')[1]
+        
+        if(token == null) 
+            return res.sendStatus(401)
+    
+        jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
+            if(err)
+                return res.sendStatus(403)
+            req.id = id
+            const user = await User.findByPk(req.id)
+            if(user == null){
+                res.sendStatus(404)
+            } else if(user.admin){
+                req.user = user.username
+                next()
+            } else {
+                res.sendStatus(403)
+            }
+        })
+    } catch (error) {
+        res.sendStatus(500)
+    }
+}
+
 function generateAccessToken(user) {
     return jwt.sign(user, ACCESS_TOKEN_SECRET)
 }
@@ -138,11 +165,40 @@ const count = async (req, res) => {
     }
 }
 
+// Password should be sent encryoted by frontend
 const create = async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
         if((await User.findOne({ where: { email: req.body.email }})) !== null){
-            res.status(403).send("Email adress already used")
+            res.status(403).send("Email address already used")
+        }
+        else if((await User.findOne({ where: { username: req.body.username }})) !== null){
+            res.status(403).send("Username already used")
+        }
+        else{
+            const newUser = await User.create({
+                "email": req.body.email,
+                "password": hashedPassword,
+                "username": req.body.username,
+                "admin": false
+            })
+            const accessToken = generateAccessToken(newUser.id)
+            res.status(201).json(accessToken)
+        }
+    } catch (error) {
+        res.sendStatus(401)
+    }
+}
+
+/*
+*TMP method, sets Admin to true
+*TODO: Delete method when dev is over / switching to prod
+*/
+const createTmp = async (req, res) => {
+    try {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+        if((await User.findOne({ where: { email: req.body.email }})) !== null){
+            res.status(403).send("Email address already used")
         }
         else if((await User.findOne({ where: { username: req.body.username }})) !== null){
             res.status(403).send("Username already used")
@@ -257,11 +313,13 @@ const getUser = async (req, res) => {
 }
 
 module.exports = {
+    authenticateAdmin,
     authenticateToken,
     addScore,
     changeAdmin,
     count,
     create,
+    createTmp,
     deleteById,
     getAll,
     getByEmail,

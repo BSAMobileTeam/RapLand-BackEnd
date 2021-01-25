@@ -12,6 +12,7 @@ const {
 } = require('./question.index')
 
 const checkCreateCommunityQuestion = [
+    header('authorization').exists(),
     body('id').isEmpty(),
     body('author').isString().notEmpty().isLength({min: 1, max: 255}),
     body('game').custom(checkGame),
@@ -25,7 +26,7 @@ const checkCreateCommunityQuestion = [
 ]
 
 const checkCreateCommunityQuestionWithArray = [
-    //query('apiKey').isString().notEmpty(),
+    header('authorization').exists(),
     body('*.id').isEmpty(),
     body('*.author').isString().notEmpty().isLength({min: 1, max: 255}),
     body('*.game').custom(checkGame),
@@ -39,6 +40,7 @@ const checkCreateCommunityQuestionWithArray = [
 ]
 
 const checkUpdateCommunityQuestion = [
+    header('authorization').exists(),
     body('id').isEmpty().optional(),
     body('author').isString().notEmpty().isLength({min: 1, max: 255}).optional(),
     body('game').custom(checkGame).optional(),

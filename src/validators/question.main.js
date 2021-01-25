@@ -12,7 +12,7 @@ const {
 } = require('./question.index')
 
 const checkCreateQuestion = [
-    //query('apiKey').isString().notEmpty(),
+    header('authorization').exists(),
     body('id').isEmpty(),
     body('game').custom(checkGame),
     body('gameMode').custom(checkGameMode),
@@ -29,7 +29,7 @@ const checkGetQuestionById = [
 ]
 
 const checkCreateQuestionWithArray = [
-    //query('apiKey').isString().notEmpty(),
+    header('authorization').exists(),
     body('*.id').isEmpty(),
     body('*.game').custom(checkGame),
     body('*.gameMode').custom(checkGameModeForArray),
@@ -42,7 +42,7 @@ const checkCreateQuestionWithArray = [
 ]
 
 const checkUpdateQuestion = [
-    //query('apiKey').isString().notEmpty(),
+    header('authorization').exists(),
     query('id').isUUID(4),
     body('game').custom(checkGame).optional(),
     body('gameMode').custom(checkGameMode).optional(),
@@ -54,9 +54,8 @@ const checkUpdateQuestion = [
     body('mediaUrl').isURL().optional()
 ]
 
-//TODO: set max value
-const checkedGetMixedQuestionArray = [
-    query('length').isNumeric().optional()
+const checkGetMixedQuestionArray = [
+    query('length').isNumeric().isLength({min: 1, max: 50}).optional()
 ]
 
 module.exports = {
@@ -64,5 +63,5 @@ module.exports = {
     checkGetQuestionById,
     checkCreateQuestionWithArray,
     checkUpdateQuestion,
-    checkedGetMixedQuestionArray
+    checkGetMixedQuestionArray
 }
