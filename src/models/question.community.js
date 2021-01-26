@@ -25,7 +25,8 @@ const communityQuestion = sequelize.define('communityQuestion', {
     },
     title: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     choices: {
         type: DataTypes.ARRAY(DataTypes.STRING),

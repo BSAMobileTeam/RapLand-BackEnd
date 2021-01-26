@@ -33,22 +33,18 @@ module.exports = app => {
     )
     
     router.delete(
-        '/deleteById',
+        '/delete',
         checkDeleteQuestion,
         [validate, communityController.authenticateAdmin, communityController.deleteById]
     )
     
     router.get(
-        '/getById',
+        '/get',
         query('id').isUUID(4),
         [validate, communityController.getById]
     )
     
     router.get('/getAll', communityController.getAll)
-    
-
-    //TODO: remove this
-    router.get('/getMixedArray', communityController.getMixedArray)
     
     router.get('/count', communityController.getCount)
     

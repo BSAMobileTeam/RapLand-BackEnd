@@ -33,7 +33,7 @@ function authenticateAdmin(req, res, next) {
         })
     }
     catch {
-        res.sendStatus(error.code || 500)
+        res.sendStatus(500)
     }
 }
 
@@ -44,7 +44,7 @@ const create = async (req, res) => {
         if (error.name === "SequelizeUniqueConstraintError") {
             return res.status(409).send(`The question "${req.body.title}" already exists`)
         }
-        return res.sendStatus(error.code || 500)
+        return res.sendStatus(500)
     }
 }
 
@@ -52,8 +52,8 @@ const getById = async (req, res) => {
     try {
         const question = await Question.findByPk(req.query.id)
         return question !== null ? res.status(200).json(question) : res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
-    } catch {
-        return res.sendStatus(error.code || 500)
+    } catch (error) {
+        return res.sendStatus(500)
     }
 }
 
@@ -62,7 +62,7 @@ const getAll = async (req, res) => {
         const questions = await Question.findAll()
         return questions.length > 0 ? res.status(200).json(questions) : res.status(404).send("There are no available questions")
     } catch (error) {
-        return res.sendStatus(error.code || 500)
+        return res.sendStatus(500)
     }
 }
 
@@ -87,7 +87,7 @@ const getMixedArray = async (req, res) => {
         }
         return res.status(200).json(mixedArray)
     } catch (error) {
-       return res.sendStatus(error.code || 500)
+       return res.sendStatus(500)
     }
 }
 
@@ -107,7 +107,7 @@ const createWithArray = async (req, res) => {
         }
         return errors.length <= 0 ? res.status(201).send("Questions created") : res.status(206).json(errors)
     } catch (error) {
-        return res.sendStatus(error.code || 500)
+        return res.sendStatus(500)
     }
 }
 
@@ -120,15 +120,15 @@ const deleteById = async (req, res) => {
         await question.destroy()
         return res.status(200).send('Deleted')
     } catch (error) {
-        res.sendStatus(error.code || 500)
+        res.sendStatus(500)
     }
 }
 
 const getCount = async (req, res) => {
-    try {
-        return res.status(200).send(await Question.count())
+    try {        
+        return res.status(200).send(await (await Question.count()).toString())
     } catch (error) {
-        return res.sendStatus(error.code || 500)
+        return res.sendStatus(500)
     }
 }
 
@@ -143,7 +143,7 @@ const updateQuestion = async (req, res) => {
         })
         return res.status(200).send(req.body)
     } catch (error) {
-	    return res.sendStatus(error.code || 500)
+	    return res.sendStatus(500)
     }
 }
 

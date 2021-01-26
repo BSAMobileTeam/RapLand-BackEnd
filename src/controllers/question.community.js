@@ -54,116 +54,86 @@ function authenticateAdmin(req, res, next) {
 
 const create = async (req, res) => {
     try {
-        if((await Question.findOne({ where: { title: req.body.title }})) == null){
-            const newQuestion = await Question.create(req.body)
-            res.status(201).json(newQuestion)
-        } else {
-            res.status(401).send('Duplicate')
-        }
+        return res.status(201).json(await Question.create(req.body))
     } catch (error) {
-        res.sendStatus(401)
+        if (error.name === "SequelizeUniqueConstraintError") {
+            return res.status(409).send(`The question "${req.body.title}" already exists`)
+        }
+        return res.sendStatus(500)
     }
 }
 
 const getById = async (req, res) => {
     try {
-        const question = {}
-        if((question = await communityQuestion.findByPk(req.query.id)) != null){
-            res.status(200).json(question)
-        } else {
-            res.sendStatus(400)
-        }
+        const question = await Question.findByPk(req.query.id)
+        return question !== null ? res.status(200).json(question) : res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
     } catch (error) {
-        res.sendStatus(404)
+        return res.sendStatus(500)
     }
 }
 
 const getAll = async (req, res) => {
     try {
-        const questions = await communityQuestion.findAll()
-        res.status(200).json(questions)
+        const questions = await Question.findAll()
+        return questions.length > 0 ? res.status(200).json(questions) : res.status(404).send("There are no available questions")
     } catch (error) {
-        res.sendStatus(404)
-    }
-}
-
-const getMixedArray = async (req, res) => {
-    try {
-        const totalLenght = (await communityQuestion.findAll()).length
-        const maxLength = (totalLenght > 0 && totalLenght <= 30) ? totalLenght : 30
-        const length = (req.query.length && req.query.length > 0 && req.query.length <= 50 && req.query.length <= maxLength) ? req.query.length : maxLength
-        const mixedArray = []
-        const questions = await communityQuestion.findAll()
-
-        while (mixedArray.length < length) {
-            const newQuestion = questions[Math.floor(Math.random() * questions.length)]
-            if (!(newQuestion in mixedArray)) {
-                mixedArray.push(newQuestion)
-            }
-        }
-        res.status(201).json(mixedArray)
-    } catch (error) {
-        res.sendStatus(404)
+        return res.sendStatus(500)
     }
 }
 
 const createWithArray = async (req, res) => {
     try {
-        //const error = false
-        const array = []
+        const errors = []
+
         for (const question of req.body) {
-            if((await communityQuestion.findOne({ where: { title: question.title } })) == null){
-                array.push(await communityQuestion.create(question))
-            } else {
-                array.push({ "error": "Duplicate"})
-                //error = true
+            try {
+                await Question.create(question)
+            } catch (error) {
+                errors.push({
+                    error: error.name === "SequelizeUniqueConstraintError" ? "This question already exists" : error.name,
+                    question: question
+                })
             }
         }
-        res.status(201).json(array)
-        //error ? res.status(206).json(array) : res.status(201).json(array)
+        return errors.length <= 0 ? res.status(201).send("Questions created") : res.status(206).json(errors)
     } catch (error) {
-        res.sendStatus(401)
+        return res.sendStatus(500)
     }
 }
 
 const deleteById = async (req, res) => {
     try {
-        const question = await communityQuestion.findByPk(req.query.id)
+        const question = await Question.findByPk(req.query.id)
+        if (question === null) {
+            return res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
+        }
         await question.destroy()
-        res.status(200).send('Deleted')
-    } catch (error) {
-        res.sendStatus(400)
-    }
-}
-
-const getCount = async (req, res) => {
-    try {
-        const questions = await communityQuestion.findAll()
-        res.status(200).send(""+questions.length)
+        return res.status(200).send('Deleted')
     } catch (error) {
         res.sendStatus(500)
     }
 }
 
-const updateQuestion = async (req, res) => {
-    try {
-        const question = await communityQuestion.findByPk(req.query.id)
-        await question.update(req.body, {
-            where: { id: req.query.id }
-        })
-        res.status(200).send(req.body)
-    } catch {
-	res.sendStatus(404)
+const getCount = async (req, res) => {
+    try {        
+        return res.status(200).send(await (await Question.count()).toString())
+    } catch (error) {
+        return res.sendStatus(500)
     }
 }
 
-const ping = (req, res) => {
+const updateQuestion = async (req, res) => {
     try {
-        res.status(200).json({
-            "version": VERSION
+        const question = await Question.findByPk(req.query.id)
+        if (question === null) {
+            return res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
+        }
+        await question.update(req.body, {
+            where: { id: req.query.id }
         })
-    } catch {
-	res.sendStatus(500)
+        return res.status(200).send(req.body)
+    } catch (error) {
+	    return res.sendStatus(500)
     }
 }
 
@@ -174,9 +144,7 @@ module.exports = {
     getById,
     getAll,
     getCount,
-    getMixedArray,
     updateQuestion,
     createWithArray,
-    deleteById,
-    ping
+    deleteById
 }
