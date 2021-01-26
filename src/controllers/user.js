@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 
 const {API_KEY, ACCESS_TOKEN_SECRET} = process.env
 
-function authenticateToken(req, res, next) {
+const authenticateToken = (req, res, next) => {
     try {
         const authHeader = req.headers['authorization']
         const token = authHeader && authHeader.split(' ')[1]
@@ -28,30 +28,55 @@ function authenticateToken(req, res, next) {
     }
 }
 
-function authenticateAdmin(req, res, next) {
+// function authenticateAdmin(req, res, next) {
+//     try {
+//         const authHeader = req.headers['authorization']
+//         const token = authHeader && authHeader.split(' ')[1]
+                
+//         if (token === null) {
+//             return res.status(401).send("You must be connected as an administrator to access this ressource.")
+//         }
+//         jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
+//             if (err) {
+//                 return res.staus(403).send("You can't access this method because you are not administrator.")
+//             }
+//             const user = await User.findByPk(id)
+//             if (user === null) {
+//                 return res.status(401).send("You must be connected as an administrator to access this ressource.")
+//             } else if (user.admin === true) {
+//                 next()
+//             } else {
+//                 return res.staus(403).send("You can't access this method because you are not administrator.")
+//             }
+//         })
+//     } catch (error) {
+//         return res.sendStatus(500)
+//     }
+// }
+
+const authenticateAdmin = (req, res, next) => {
     try {
         const authHeader = req.headers['authorization']
         const token = authHeader && authHeader.split(' ')[1]
-        
-        if(token == null) 
-            return res.sendStatus(401)
-    
+                
+        if(token === null) {
+            return res.status(401).send("You must be connected as an administrator to access this ressource.")
+        }
         jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
-            if(err)
-                return res.sendStatus(403)
-            req.id = id
-            const user = await User.findByPk(req.id)
-            if(user == null){
-                res.sendStatus(404)
-            } else if(user.admin){
-                req.user = user.username
+            if (err) {
+                return res.staus(403).send("You can't access this method because you are not administrator.")
+            }
+            const user = await User.findByPk(id)
+            if (user === null) {
+                return res.status(404).send("Can't find your user")
+            } else if (user.admin === true) {
                 next()
             } else {
-                res.sendStatus(403)
+                return res.status(403).send("You can't access this method because you are not administrator.")
             }
         })
     } catch (error) {
-        res.sendStatus(500)
+        return res.sendStatus(500)
     }
 }
 
@@ -188,16 +213,14 @@ const create = async (req, res) => {
 
 const deleteById = async (req, res) => {
     try {
-        const user = await User.findByPk(req.query.id)
-        const admin = await User.findByPk(req.id)
-        if(admin.admin){
-            await user.destroy()
-            res.status(200).send('Deleted')
-        } else {
-            res.sendStatus(403)
+        const userToDelete = await User.findByPk(req.query.id)
+        if (userToDelete === null) {
+            return res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
         }
+        await userToDelete.destroy()
+        return res.status(200).send('Deleted')
     } catch (error) {
-        res.sendStatus(404)
+        return res.sendStatus(500)
     }
 }
 
@@ -206,14 +229,9 @@ const getAll = async (req, res) => {
         const users = await User.findAll({
             attributes: { exclude: ['password'] }
         })
-        const admin = await User.findByPk(req.id)
-        if(admin.admin){
-            res.status(200).json(users)
-        } else {
-            res.sendStatus(403)
-        }
+        return users.length > 0 ? res.status(200).json(users) : res.status(404).send("There are no available users")
     } catch (error) {
-        res.sendStatus(404)
+        res.sendStatus(500)
     }
 }
 
