@@ -125,14 +125,14 @@ const updateUser = async (req, res) => {
 
 const addScore = async (req, res) => {
     try {
-        const user = await User.findByPk(req.id)
-        const score = user.score
-        await user.update({ "score": req.body.score + score }, {
-            where: { id: req.id }
+        const user = await User.findByPk(req.query.id)
+        console.log(user.score + req.query.score)
+        await user.update({ score: parseInt(parseInt(user.score) + parseInt(req.query.score)) }, {
+            where: { id: req.query.id }
         })
-        res.status(200).json(user.score)
+        return res.status(200).send(`${user.username} new score : ${user.score}`)
     } catch (error) {
-        res.sendStatus(500)
+        return res.sendStatus(500)
     }
 }
 

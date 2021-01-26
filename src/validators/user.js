@@ -6,7 +6,8 @@ const checkGetUser = [
 
 const checkAddScore = [
     header('authorization').exists(),
-    body('score').isNumeric(), //max score ?
+    query('id').isUUID(4).notEmpty(),
+    query('score').isNumeric({min: 1}), //max score ?
 ]
 
 const checkRegister = [
