@@ -1,5 +1,5 @@
 
-const { validate } = require('../validators/index');
+const { validate } = require('../validators/index')
 const {
     checkCreateQuestion,
     checkGetQuestionById,

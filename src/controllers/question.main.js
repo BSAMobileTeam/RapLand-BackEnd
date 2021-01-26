@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken')
 
 const {
     ACCESS_TOKEN_SECRET,
-    VERSION="1.0.1",
     DEFAULT_MIXED_ARRAY_LENGTH,
     GET_MIXED_ARRAY_MAX_EXECUTION_TIME_MS
 } = process.env
@@ -34,7 +33,7 @@ function authenticateAdmin(req, res, next) {
         })
     }
     catch {
-        res.sendStatus(500)
+        res.sendStatus(error.code || 500)
     }
 }
 
@@ -45,7 +44,7 @@ const create = async (req, res) => {
         if (error.name === "SequelizeUniqueConstraintError") {
             return res.status(409).send(`The question "${req.body.title}" already exists`)
         }
-        return res.sendStatus(500)
+        return res.sendStatus(error.code || 500)
     }
 }
 
@@ -54,7 +53,7 @@ const getById = async (req, res) => {
         const question = await Question.findByPk(req.query.id)
         return question !== null ? res.status(200).json(question) : res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
     } catch {
-        return res.sendStatus(500)
+        return res.sendStatus(error.code || 500)
     }
 }
 
@@ -63,7 +62,7 @@ const getAll = async (req, res) => {
         const questions = await Question.findAll()
         return questions.length > 0 ? res.status(200).json(questions) : res.status(404).send("There are no available questions")
     } catch (error) {
-        return res.sendStatus(500)
+        return res.sendStatus(error.code || 500)
     }
 }
 
@@ -88,7 +87,7 @@ const getMixedArray = async (req, res) => {
         }
         return res.status(200).json(mixedArray)
     } catch (error) {
-       return res.sendStatus(500)
+       return res.sendStatus(error.code || 500)
     }
 }
 
@@ -108,7 +107,7 @@ const createWithArray = async (req, res) => {
         }
         return errors.length <= 0 ? res.status(201).send("Questions created") : res.status(206).json(errors)
     } catch (error) {
-        return res.sendStatus(500)
+        return res.sendStatus(error.code || 500)
     }
 }
 
@@ -121,7 +120,7 @@ const deleteById = async (req, res) => {
         await question.destroy()
         return res.status(200).send('Deleted')
     } catch (error) {
-        res.sendStatus(500)
+        res.sendStatus(error.code || 500)
     }
 }
 
@@ -129,31 +128,25 @@ const getCount = async (req, res) => {
     try {
         return res.status(200).send(await Question.count())
     } catch (error) {
-        return res.sendStatus(500)
+        return res.sendStatus(error.code || 500)
     }
 }
 
 const updateQuestion = async (req, res) => {
     try {
         const question = await Question.findByPk(req.query.id)
+        if (question === null) {
+            return res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
+        }
         await question.update(req.body, {
             where: { id: req.query.id }
         })
-        res.status(200).send(req.body)
+        return res.status(200).send(req.body)
     } catch (error) {
-	res.sendStatus(404)
+	    return res.sendStatus(error.code || 500)
     }
 }
 
-const ping = (req, res) => {
-    try {
-        res.status(200).json({
-            "version": VERSION
-        })
-    } catch (error) {
-	res.sendStatus(500)
-    }
-}
 
 module.exports = {
     authenticateAdmin,
@@ -164,6 +157,5 @@ module.exports = {
     getMixedArray,
     updateQuestion,
     createWithArray,
-    deleteById,
-    ping
+    deleteById
 }
