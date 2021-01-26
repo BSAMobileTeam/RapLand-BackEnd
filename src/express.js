@@ -4,11 +4,14 @@ const {
     LOG_LEVEL
 } = process.env
 const log4js = require('log4js')
+const cors = require('cors')
 
 module.exports = () => {
     const app = express()
 
     app.use(express.json())
+
+    app.use(cors())
 
     app.use(log4js.connectLogger(log4js.getLogger('express'), {level: LOG_LEVEL}))
     
@@ -21,6 +24,7 @@ module.exports = () => {
     })
 
     // Define routes
+    require('./routes/utils')(app)
     require('./routes/question.main')(app)
     require('./routes/question.community')(app)
 	require('./routes/user')(app)

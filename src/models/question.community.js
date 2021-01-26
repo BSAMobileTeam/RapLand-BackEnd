@@ -2,7 +2,7 @@ const sequelize = require('../community.sequelize')
 
 const { DataTypes } = require('sequelize')
 
-const communityQuestion = sequelize.define('communityQuestion', {
+const CommunityQuestion = sequelize.define('communityQuestion', {
     id: {
         type: DataTypes.UUID,
         primaryKey: true,
@@ -44,4 +44,4 @@ const communityQuestion = sequelize.define('communityQuestion', {
     }
 })
 
-module.exports = communityQuestion
+module.exports = CommunityQuestion
