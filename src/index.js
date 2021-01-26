@@ -1,4 +1,9 @@
 const express = require('./express')
+const { checkEnvVariables } = require('./config')
+const logger = require('./logger')
+
+
+checkEnvVariables()
 
 const app = express()
 
