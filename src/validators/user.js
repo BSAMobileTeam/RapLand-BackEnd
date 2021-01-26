@@ -65,10 +65,14 @@ const checkUpdateUserById = [
     body('score').isNumeric().optional(),
 ]
 
-const checkChangeAdmin = [
+const checkSetAdmin = [
     header('authorization').exists(),
     query('id').isUUID(4).notEmpty(),
-    body('admin').isBoolean().notEmpty()
+    query('isAdmin').isBoolean().notEmpty()
+]
+
+const checkGetAll = [
+    header('authorization').exists()
 ]
 
 const checkCount = [
@@ -86,6 +90,7 @@ module.exports = {
     checkGetById,
     checkUpdateUser,
     checkUpdateUserById,
-    checkChangeAdmin,
+    checkSetAdmin,
+    checkGetAll,
     checkCount
 }

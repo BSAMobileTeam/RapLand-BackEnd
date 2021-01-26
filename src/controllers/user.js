@@ -14,10 +14,9 @@ const authenticateToken = (req, res, next) => {
     
         jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
             if(err) return res.sendStatus(403)
-            req.id = id
-            const user = await User.findByPk(req.id)
-            if(user !== null){
-                req.user = user.username
+            const user = await User.findByPk(id)
+            if (user !== null) {
+                req.headers.user = user
                 next()
             } else {
                 res.sendStatus(403)
@@ -27,32 +26,6 @@ const authenticateToken = (req, res, next) => {
         res.sendStatus(500)
     }
 }
-
-// function authenticateAdmin(req, res, next) {
-//     try {
-//         const authHeader = req.headers['authorization']
-//         const token = authHeader && authHeader.split(' ')[1]
-                
-//         if (token === null) {
-//             return res.status(401).send("You must be connected as an administrator to access this ressource.")
-//         }
-//         jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
-//             if (err) {
-//                 return res.staus(403).send("You can't access this method because you are not administrator.")
-//             }
-//             const user = await User.findByPk(id)
-//             if (user === null) {
-//                 return res.status(401).send("You must be connected as an administrator to access this ressource.")
-//             } else if (user.admin === true) {
-//                 next()
-//             } else {
-//                 return res.staus(403).send("You can't access this method because you are not administrator.")
-//             }
-//         })
-//     } catch (error) {
-//         return res.sendStatus(500)
-//     }
-// }
 
 const authenticateAdmin = (req, res, next) => {
     try {
@@ -64,12 +37,13 @@ const authenticateAdmin = (req, res, next) => {
         }
         jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
             if (err) {
-                return res.staus(403).send("You can't access this method because you are not administrator.")
+                return res.status(403).send("You can't access this method because you are not administrator.")
             }
             const user = await User.findByPk(id)
             if (user === null) {
-                return res.status(404).send("Can't find your user")
+                return res.status(403).send("You can't access this method because you are not administrator.")
             } else if (user.admin === true) {
+                req.headers.user = user
                 next()
             } else {
                 return res.status(403).send("You can't access this method because you are not administrator.")
@@ -86,53 +60,53 @@ function generateAccessToken(user) {
 
 const login = async (req, res) => {
     try {
-        var user = null
-        if(req.body.username) {
-            user = await User.findAll({
-            where: {username:req.body.username}
+        let user = null
+        if (req.body.username) {
+            user = await User.findOne({
+                where: { username: req.body.username }
+            })
+        } else if (req.body.email) {
+            user = await User.findOne({
+                where: { email: req.body.email }
             })
         }
-        else if(req.body.email) {
-            user = await User.findAll({
-            where: {email:req.body.email}
+        if (user === null) {
+            return res.status(404).send('Cannot find user')
+        }
+        if (await bcrypt.compare(req.body.password, user.password)){
+            return res.status(200).json({
+                accessToken: generateAccessToken(user.id)
             })
-        }
-        else {
-            res.sendStatus(404).send('Cannot find user')
-        }
-        if( await bcrypt.compare(req.body.password, user[0].password)){
-            const accessToken = generateAccessToken(user[0].id)
-            res.status(200).json({ accessToken: accessToken })
         } else {
-            res.status(403).send('Not Allowed')
+            return res.status(403).send('Not Allowed')
         }
     } catch (error) {
-        res.sendStatus(403)
+        return res.sendStatus(500)
     }
 }
 
 const logout = async (req, res) => {
     try {
         //somehow logout user ?
-        res.sendStatus(204)
+        return res.sendStatus(204)
     } catch (error) {
-        res.sendStatus(403)
+        return res.sendStatus(403)
     }
 }
 
 const updateUserById = async (req, res) => {
     try {
         const user = await User.findByPk(req.query.id)
-        const admin = await User.findByPk(req.id)
-        if(admin.admin){
-        await user.update(req.body, {
+        if (user === null) {
+            return res.status(404).send(`This user ID doesn't exists : ${req.query.id}`)
+        }
+        return res.status(200).json(
+            await user.update(req.body, {
                 where: { id: req.query.id }
             })
-            res.status(200).send(req.body)
-        }
-        res.sendStatus(403)
+        )
     } catch (error) {
-        res.sendStatus(404)
+        res.sendStatus(500)
     }
 }
 
@@ -161,19 +135,22 @@ const addScore = async (req, res) => {
     }
 }
 
-const changeAdmin = async (req, res) => {
+/*
+*   Warning ! An admin qan remove admin rights to another admin
+*/
+const setAdmin = async (req, res) => {
     try {
         const user = await User.findByPk(req.query.id)
-        const admin = await User.findByPk(req.id)
-        if(admin.admin){
-            await user.update(req.body, {
-                where: { id: req.query.id}
-            })
-            res.status(200).send('Status updated')
+        if (user === null) {
+            return res.status(404).send(`This user ID doesn't exists : ${req.query.id}`)
         }
-        res.sendStatus(403)
+        req.query.isAdmin = req.query.isAdmin === "true" ? true : false
+        await user.update(req.body, {
+            where: { admin: req.query.isAdmin}
+        })        
+        return res.status(200).send(`${user.username} is ${req.query.isAdmin === true ? "now an administrator" : "not an administrator anymore"}.`)
     } catch (error) {
-        res.sendStatus(404)
+        res.sendStatus(500)
     }
 }
 
@@ -182,16 +159,16 @@ const count = async (req, res) => {
         const users = await User.findAll()
         const admin = await User.findByPk(req.id)
         if(admin.admin){
-            res.status(200).send(""+users.length)
+            return res.status(200).send(""+users.length)
         } else{ 
-            res.sendStatus(403)
+            return res.sendStatus(403)
         }
     } catch (error) {
-        res.sendStatus(500)
+        return res.sendStatus(500)
     }
 }
 
-// Password should be sent encryoted by frontend
+// Password should be sent encrypted by frontend
 const create = async (req, res) => {
     try {
         const newUser = await User.create({
@@ -199,7 +176,9 @@ const create = async (req, res) => {
             password: await bcrypt.hash(req.body.password, 10),
             admin: req.query.apiKey && req.query.apiKey === API_KEY ? req.body.admin : false
         })
-        return res.status(201).json(generateAccessToken(newUser.id))
+        return res.status(201).json({
+            accessToken: generateAccessToken(newUser.id)
+        })
     } catch (error) {
         if (error.name === "SequelizeUniqueConstraintError") {
             return res.status(424).send(
@@ -215,7 +194,7 @@ const deleteById = async (req, res) => {
     try {
         const userToDelete = await User.findByPk(req.query.id)
         if (userToDelete === null) {
-            return res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
+            return res.status(404).send(`This user ID doesn't exists : ${req.query.id}`)
         }
         await userToDelete.destroy()
         return res.status(200).send('Deleted')
@@ -229,9 +208,9 @@ const getAll = async (req, res) => {
         const users = await User.findAll({
             attributes: { exclude: ['password'] }
         })
-        return users.length > 0 ? res.status(200).json(users) : res.status(404).send("There are no available users")
+        return users.length > 0 ? res.status(200).json(users) : res.status(404).send("There are no available users.")
     } catch (error) {
-        res.sendStatus(500)
+        return res.sendStatus(500)
     }
 }
 
@@ -241,14 +220,9 @@ const getById = async (req, res) => {
             where: { id: req.query.id },
             attributes: { exclude: ['password'] }
         })
-        const admin = await User.findByPk(req.id)
-        if(admin.admin){
-            res.status(200).json(user)
-        } else {
-            res.sendStatus(403)
-        }
+        return user !== null ? res.status(200).json(user) : res.status(404).send("This user ID doesn't exists.")
     } catch (error) {
-        res.sendStatus(404)
+        return res.sendStatus(404)
     }
 }
 
@@ -258,14 +232,9 @@ const getByUsername = async (req, res) => {
             where: { username: req.query.username },
             attributes: { exclude: ['password'] }
         })
-        const admin = await User.findByPk(req.id)
-        if(admin.admin){
-            res.status(200).json(user)
-        } else {
-            res.sendStatus(403)
-        }
+        return user !== null ? res.status(200).json(user) : res.status(404).send("This username doesn't exists.")
     } catch (error) {
-        res.sendStatus(404)
+        return res.sendStatus(500)
     }
 }
 
@@ -275,26 +244,23 @@ const getByEmail = async (req, res) => {
             where: { email: req.query.email },
             attributes: { exclude: ['password'] }
         })
-        const admin = await User.findByPk(req.id)
-        if(admin.admin){
-            res.status(200).json(user)
-        } else {
-            res.sendStatus(403)
-        }
+        return user !== null ? res.status(200).json(user) : res.status(404).send("This email doesn't exists.")
     } catch (error) {
-        res.sendStatus(404)
+        return res.sendStatus(404)
     }
 }
 
 const getUser = async (req, res) => {
     try {
-        const user = await User.findOne({
-            where: { id: req.id },
-            attributes: { exclude: ['password'] }
-        })
-        res.status(200).json(user)
+        if (req.headers.user === null) {
+            return res.status(404).send("This user doesn't exists.")
+        }
+        const user = req.headers.user
+        delete user.dataValues.password
+        delete user._previousDataValues.password
+        return res.status(200).json(user)
     } catch (error) {
-        res.sendStatus(500)
+        return res.sendStatus(500)
     }
 }
 
@@ -302,7 +268,7 @@ module.exports = {
     authenticateAdmin,
     authenticateToken,
     addScore,
-    changeAdmin,
+    setAdmin,
     count,
     create,
     deleteById,

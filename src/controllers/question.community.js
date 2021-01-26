@@ -128,10 +128,11 @@ const updateQuestion = async (req, res) => {
         if (question === null) {
             return res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
         }
-        await question.update(req.body, {
-            where: { id: req.query.id }
-        })
-        return res.status(200).send(req.body)
+        return res.status(200).json(
+            await question.update(req.body, {
+                where: { id: req.query.id }
+            })
+        )
     } catch (error) {
 	    return res.sendStatus(500)
     }
