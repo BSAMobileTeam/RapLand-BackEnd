@@ -1,12 +1,16 @@
 const express = require('express')
 const {
     VERSION="1.0.1",
+    LOG_LEVEL
 } = process.env
+const log4js = require('log4js')
 
 module.exports = () => {
     const app = express()
 
     app.use(express.json())
+
+    app.use(log4js.connectLogger(log4js.getLogger('express'), {level: LOG_LEVEL}))
     
     app.get('/', (req, res) => {
         try {

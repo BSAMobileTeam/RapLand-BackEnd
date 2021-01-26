@@ -28,7 +28,7 @@ See [config.js](src/config.js) for more details.
 | `ACCESS_TOKEN_SECRET`                   | Secret access token                                                              | String                                                    |
 | `DEFAULT_MIXED_ARRAY_LENGTH`            | Default length for mixedArray received by users                                  | Number                                                    |
 | `GET_MIXED_ARRAY_MAX_EXECUTION_TIME_MS` | Maximal execution time (in milliseconds) for the getMixedArray controller method | Number                                                    |
-| `SEQUELIZE_LOG_LEVEL`                   | Log level (using log4js) for Sequelize log                                       | String [off, fatal, error, warn, info, debug, trace, all] |
+| `LOG_LEVEL`                             | Log level (using log4js) for Sequelize log                                       | String [off, fatal, error, warn, info, debug, trace, all] |
 
 ## Database
 

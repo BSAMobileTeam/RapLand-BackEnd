@@ -7,16 +7,16 @@ const checkEnvVariables = () => {
     let error = false
 
     if (
-        process.env["SEQUELIZE_LOG_LEVEL"] === undefined ||
-        process.env["SEQUELIZE_LOG_LEVEL"] === "" ||
-        process.env["SEQUELIZE_LOG_LEVEL"] !== "trace" &&
-        process.env["SEQUELIZE_LOG_LEVEL"] !== "debug" &&
-        process.env["SEQUELIZE_LOG_LEVEL"] !== "info" &&
-        process.env["SEQUELIZE_LOG_LEVEL"] !== "warn" &&
-        process.env["SEQUELIZE_LOG_LEVEL"] !== "error" &&
-        process.env["SEQUELIZE_LOG_LEVEL"] !== "fatal"
+        process.env["LOG_LEVEL"] === undefined ||
+        process.env["LOG_LEVEL"] === "" ||
+        process.env["LOG_LEVEL"] !== "trace" &&
+        process.env["LOG_LEVEL"] !== "debug" &&
+        process.env["LOG_LEVEL"] !== "info" &&
+        process.env["LOG_LEVEL"] !== "warn" &&
+        process.env["LOG_LEVEL"] !== "error" &&
+        process.env["LOG_LEVEL"] !== "fatal"
     ) {
-        logger.error("There is no variable \"SEQUELIZE_LOG_LEVEL\" in .env (it must be \"off\", \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"fatal\")")
+        logger.error("There is no variable \"LOG_LEVEL\" in .env (it must be \"off\", \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"fatal\")")
         error = true
     }
     if (keys.includes('API_KEY') === false || process.env["API_KEY"] === "") {

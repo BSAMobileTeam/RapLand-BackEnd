@@ -1,11 +1,13 @@
 // External modules
 const { Sequelize } = require('sequelize')
+const logger = require('./logger')
 
 // Creates Sequelize instance
 const communityDatabase = new Sequelize('community', 'community', 'community', {
   host: 'localhost',
   port: 5434,
-  dialect: 'postgres',  
+  dialect: 'postgres',
+  logging: msg => logger.trace(msg),
   pool: {
     min: 0,
     max: 5,

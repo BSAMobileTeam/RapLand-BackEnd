@@ -1,5 +1,6 @@
 // External modules
 const { Sequelize } = require('sequelize')
+const logger = require('./logger')
 
 // Creates Sequelize instance
 const mainDatabase = new Sequelize('rapjeu', 'rapjeu', 'rapjeu', {
@@ -7,6 +8,7 @@ const mainDatabase = new Sequelize('rapjeu', 'rapjeu', 'rapjeu', {
   port: 5432,
   dialect: 'postgres',
   storage: './database.sqlite',
+  logging: msg => logger.trace(msg),
   pool: {
     min: 0,
     max: 5,
