@@ -156,13 +156,7 @@ const setAdmin = async (req, res) => {
 
 const count = async (req, res) => {
     try {
-        const users = await User.findAll()
-        const admin = await User.findByPk(req.id)
-        if(admin.admin){
-            return res.status(200).send(""+users.length)
-        } else{ 
-            return res.sendStatus(403)
-        }
+       return res.status(200).send((await User.count()).toString())
     } catch (error) {
         return res.sendStatus(500)
     }
