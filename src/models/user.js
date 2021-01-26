@@ -24,6 +24,7 @@ const User = mainDatabase.define('user', {
     },
     bought: {
         type: DataTypes.ARRAY(DataTypes.STRING),
+        defaultValue: []
     },
     admin: {
         type: DataTypes.BOOLEAN,

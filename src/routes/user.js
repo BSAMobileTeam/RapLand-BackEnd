@@ -14,6 +14,11 @@ const {
     checkCount
 } = require('../validators/user')
 
+/**
+ * 
+ * is getUser usefeul ?
+ */
+
 module.exports = app => {
     const userController = require('../controllers/user')
     const router = require('express').Router()

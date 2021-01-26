@@ -169,34 +169,20 @@ const count = async (req, res) => {
 // Password should be sent encryoted by frontend
 const create = async (req, res) => {
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        if((await User.findOne({ where: { email: req.body.email }})) !== null){
-            res.status(403).send("Email address already used")
-        }
-        else if((await User.findOne({ where: { username: req.body.username }})) !== null){
-            res.status(403).send("Username already used")
-        }
-        else if(req.query.apiKey == API_KEY){
-            const newUser = await User.create({
-                "email": req.body.email,
-                "password": hashedPassword,
-                "username": req.body.username,
-                "admin": true
-            })
-            const accessToken = generateAccessToken(newUser.id)
-            res.status(201).json(accessToken)
-        } else {
-            const newUser = await User.create({
-                "email": req.body.email,
-                "password": hashedPassword,
-                "username": req.body.username,
-                "admin": false
-            })
-            const accessToken = generateAccessToken(newUser.id)
-            res.status(201).json(accessToken)
-        }
+        const newUser = await User.create({
+            ...req.body,
+            password: await bcrypt.hash(req.body.password, 10),
+            admin: req.query.apiKey && req.query.apiKey === API_KEY ? req.body.admin : false
+        })
+        return res.status(201).json(generateAccessToken(newUser.id))
     } catch (error) {
-        res.sendStatus(401)
+        if (error.name === "SequelizeUniqueConstraintError") {
+            return res.status(424).send(
+                error.parent.constraint === "users_email_key" && "Email address already used"
+                || error.parent.constraint === "users_username_key" && "Username already used"
+            )
+        }
+        return res.sendStatus(500)
     }
 }
 

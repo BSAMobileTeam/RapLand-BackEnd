@@ -16,7 +16,8 @@ const checkRegister = [
     body('password').isString().isLength({min: 4, max: 255}),
     body('username').isString().isLength({min: 4, max: 20}),
     body('admin').isBoolean().optional(),
-    body('score').isNumeric().optional(),
+    body('score').not().exists(),
+    body('bought').not().exists()
 ]
 
 const checkLogin = [
