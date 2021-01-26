@@ -22,18 +22,18 @@ module.exports = app => {
     router.post(
         '/createWithArray',
         checkCreateQuestionWithArray,
-        [validate, mainController.authenticateAdmin, mainController.createWithArray])
+        [validate, /*mainController.authenticateAdmin*/ mainController.createWithArray])
     
     router.put(
         '/update',
         checkUpdateQuestion,
-        [validate, mainController.authenticateAdmin, mainController.updateQuestion]
+        [validate, /*mainController.authenticateAdmin,*/ mainController.updateQuestion]
     )
 
     router.delete(
-        '/deleteById',
+        '/delete',
         checkDeleteQuestion,
-        [validate, mainController.authenticateAdmin, mainController.deleteById]
+        [validate, /*mainController.authenticateAdmin,*/ mainController.deleteById]
     )
 
     router.get(

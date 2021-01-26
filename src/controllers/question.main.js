@@ -52,7 +52,7 @@ const create = async (req, res) => {
 const getById = async (req, res) => {
     try {
         const question = await Question.findByPk(req.query.id)
-        return question !== null ? res.status(200).json(question) : res.status(404).send("This question ID doesn't exists")
+        return question !== null ? res.status(200).json(question) : res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
     } catch {
         return res.sendStatus(500)
     }
@@ -94,30 +94,34 @@ const getMixedArray = async (req, res) => {
 
 const createWithArray = async (req, res) => {
     try {
-        //const error = false
-        const array = []
+        const errors = []
+
         for (const question of req.body) {
-            if((await Question.findOne({ where: { title: question.title } })) == null) {
-                array.push(await Question.create(question))
-            } else {
-                array.push({ "error": "Duplicate"})
-                //error = true
+            try {
+                await Question.create(question)
+            } catch (error) {
+                errors.push({
+                    error: error.name === "SequelizeUniqueConstraintError" ? "This question already exists" : error.name,
+                    question: question
+                })
             }
         }
-        res.status(201).json(array)
-        //error ? res.status(206).json(array) : res.status(201).json(array)
+        return errors.length <= 0 ? res.status(201).send("Questions created") : res.status(206).json(errors)
     } catch (error) {
-        res.sendStatus(401)
+        return res.sendStatus(500)
     }
 }
 
 const deleteById = async (req, res) => {
     try {
         const question = await Question.findByPk(req.query.id)
+        if (question === null) {
+            return res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
+        }
         await question.destroy()
-        res.status(200).send('Deleted')
+        return res.status(200).send('Deleted')
     } catch (error) {
-        res.sendStatus(400)
+        res.sendStatus(500)
     }
 }
 
