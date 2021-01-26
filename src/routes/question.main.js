@@ -16,13 +16,13 @@ module.exports = app => {
     router.post(
         '/create',
         checkCreateQuestion,
-        [validate, /*mainController.authenticateAdmin*/ mainController.create]
+        [validate, /*mainController.authenticateAdmin,*/ mainController.create]
     )
     
     router.post(
         '/createWithArray',
         checkCreateQuestionWithArray,
-        [validate, /*mainController.authenticateAdmin*/ mainController.createWithArray])
+        [validate, /*mainController.authenticateAdmin,*/ mainController.createWithArray])
     
     router.put(
         '/update',

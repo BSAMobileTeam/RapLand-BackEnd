@@ -10,7 +10,8 @@ const User = mainDatabase.define('user', {
     },
     email: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     password: {
         type: DataTypes.STRING,
@@ -18,7 +19,8 @@ const User = mainDatabase.define('user', {
     },
     username: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     bought: {
         type: DataTypes.ARRAY(DataTypes.STRING),
