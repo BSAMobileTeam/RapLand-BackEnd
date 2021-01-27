@@ -1,41 +1,10 @@
 require('dotenv').config()
 const Question = require('../models/question.main')
-const User = require('../models/user')
-
-const jwt = require('jsonwebtoken')
 
 const {
-    ACCESS_TOKEN_SECRET,
     DEFAULT_MIXED_ARRAY_LENGTH,
     GET_MIXED_ARRAY_MAX_EXECUTION_TIME_MS
 } = process.env
-
-const authenticateAdmin = async (req, res, next) => {
-    try {
-        const authHeader = req.headers['authorization']
-        const token = authHeader && authHeader.split(' ')[1]
-        
-        if(token === null)
-            return res.sendStatus(401)
-        jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
-            if(err)
-                return res.sendStatus(403)
-            req.id = id
-            const user = await User.findByPk(req.id)
-            if(user == null) {
-                res.sendStatus(404)
-            } else if(user.admin){
-                req.user = user.username
-                next()
-            } else {
-                res.sendStatus(403)
-            }
-        })
-    }
-    catch {
-        res.sendStatus(500)
-    }
-}
 
 const create = async (req, res) => {
     try {
@@ -87,7 +56,7 @@ const getMixedArray = async (req, res) => {
         }
         return res.status(200).json(mixedArray)
     } catch (error) {
-       return res.sendStatus(500)
+        return res.sendStatus(500)
     }
 }
 
@@ -144,13 +113,12 @@ const updateQuestion = async (req, res) => {
             })
         )
     } catch (error) {
-	    return res.sendStatus(500)
+        return res.sendStatus(500)
     }
 }
 
 
 module.exports = {
-    authenticateAdmin,
     create,
     getById,
     getAll,

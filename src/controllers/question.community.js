@@ -1,60 +1,8 @@
-require('dotenv').config()
 const communityQuestion = require('../models/question.community')
-const User = require('../models/user')
-
-const jwt = require('jsonwebtoken')
-
-const {ACCESS_TOKEN_SECRET, VERSION="1.0.1"} = process.env
-
-function authenticateToken(req, res, next) {
-    try {
-        const authHeader = req.headers['authorization']
-        const token = authHeader && authHeader.split(' ')[1]
-        if(token == null) return res.sendStatus(401)
-    
-        jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
-            if(err) return res.sendStatus(403)
-            req.id = id
-            const user = await User.findByPk(req.id)
-            if(user !== null){
-                req.user = user.username
-                next()
-            } else {
-                res.sendStatus(404)
-            }
-        })
-    } catch (error) {
-        res.sendStatus(500)
-    }
-}
-
-function authenticateAdmin(req, res, next) {
-    try {
-        const authHeader = req.headers['authorization']
-        const token = authHeader && authHeader.split(' ')[1]
-        if(token == null) return res.sendStatus(401)
-    
-        jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
-            if(err) return res.sendStatus(403)
-            req.id = id
-            const user = await User.findByPk(req.id)
-            if(user == null){
-                res.sendStatus(404)
-            } else if(user.admin){
-                req.user = user.username
-                next()
-            } else {
-                res.sendStatus(403)
-            }
-        })
-    } catch (error) {
-        res.sendStatus(500)
-    }
-}
 
 const create = async (req, res) => {
     try {
-        return res.status(201).json(await Question.create(req.body))
+        return res.status(201).json(await communityQuestion.create(req.body))
     } catch (error) {
         if (error.name === "SequelizeUniqueConstraintError") {
             return res.status(409).send(`The question "${req.body.title}" already exists`)
@@ -65,7 +13,7 @@ const create = async (req, res) => {
 
 const getById = async (req, res) => {
     try {
-        const question = await Question.findByPk(req.query.id)
+        const question = await communityQuestion.findByPk(req.query.id)
         return question !== null ? res.status(200).json(question) : res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
     } catch (error) {
         return res.sendStatus(500)
@@ -74,7 +22,7 @@ const getById = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        const questions = await Question.findAll()
+        const questions = await communityQuestion.findAll()
         return questions.length > 0 ? res.status(200).json(questions) : res.status(404).send("There are no available questions")
     } catch (error) {
         return res.sendStatus(500)
@@ -87,7 +35,7 @@ const createWithArray = async (req, res) => {
 
         for (const question of req.body) {
             try {
-                await Question.create(question)
+                await communityQuestion.create(question)
             } catch (error) {
                 errors.push({
                     error: error.name === "SequelizeUniqueConstraintError" ? "This question already exists" : error.name,
@@ -103,7 +51,7 @@ const createWithArray = async (req, res) => {
 
 const deleteById = async (req, res) => {
     try {
-        const question = await Question.findByPk(req.query.id)
+        const question = await communityQuestion.findByPk(req.query.id)
         if (question === null) {
             return res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
         }
@@ -116,7 +64,7 @@ const deleteById = async (req, res) => {
 
 const getCount = async (req, res) => {
     try {        
-        return res.status(200).send(await (await Question.count()).toString())
+        return res.status(200).send(await (await communityQuestion.count()).toString())
     } catch (error) {
         return res.sendStatus(500)
     }
@@ -124,7 +72,7 @@ const getCount = async (req, res) => {
 
 const updateQuestion = async (req, res) => {
     try {
-        const question = await Question.findByPk(req.query.id)
+        const question = await communityQuestion.findByPk(req.query.id)
         if (question === null) {
             return res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
         }
@@ -134,13 +82,11 @@ const updateQuestion = async (req, res) => {
             })
         )
     } catch (error) {
-	    return res.sendStatus(500)
+        return res.sendStatus(500)
     }
 }
 
 module.exports = {
-    authenticateAdmin,
-    authenticateToken,
     create,
     getById,
     getAll,

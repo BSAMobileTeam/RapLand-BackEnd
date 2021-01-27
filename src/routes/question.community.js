@@ -12,30 +12,31 @@ const { query } = require('express-validator')
 
 module.exports = app => {
     const communityController = require('../controllers/question.community')
+    const utilsController = require('../controllers/utils')
     const router = require('express').Router()
     
     router.post(
         '/create',
         checkCreateCommunityQuestion,
-        [validate, communityController.authenticateToken, communityController.create]
+        [validate, utilsController.authenticateToken, communityController.create]
     )
     
     router.post(
         '/createWithArray',
         checkCreateCommunityQuestionWithArray,
-        [validate, communityController.authenticateToken, communityController.createWithArray]
+        [validate, utilsController.authenticateToken, communityController.createWithArray]
     )
 
     router.put(
         '/update',
         checkUpdateCommunityQuestion,
-        [validate, communityController.authenticateToken, communityController.updateQuestion]
+        [validate, utilsController.authenticateToken, communityController.updateQuestion]
     )
     
     router.delete(
         '/delete',
         checkDeleteQuestion,
-        [validate, communityController.authenticateAdmin, communityController.deleteById]
+        [validate, utilsController.authenticateAdmin, communityController.deleteById]
     )
     
     router.get(

@@ -15,24 +15,20 @@ const {
     checkCount
 } = require('../validators/user')
 
-/**
- * 
- * is getUser usefeul ?
- */
-
 module.exports = app => {
     const userController = require('../controllers/user')
+    const utilsController = require('../controllers/utils')
     const router = require('express').Router()
     
     router.get(
         '/getUser',
         checkGetUser, 
-        [validate, userController.authenticateToken, userController.getUser])
+        [validate, utilsController.authenticateToken, userController.getUser])
     
     router.post(
         '/addScore',
         checkAddScore,
-        [validate, userController.authenticateToken, userController.addScore])
+        [validate, utilsController.authenticateToken, userController.addScore])
 
     router.post(
         '/register',
@@ -51,52 +47,52 @@ module.exports = app => {
     router.post(
         '/addScoreById',
         checkAddScoreById,
-        [validate, userController.authenticateAdmin, userController.addScoreById])
+        [validate, utilsController.authenticateAdmin, userController.addScoreById])
 
     router.delete(
         '/deleteById',
         checkDeleteById, 
-        [validate, userController.authenticateAdmin, userController.deleteById])
+        [validate, utilsController.authenticateAdmin, userController.deleteById])
 
     router.get(
         '/getByUsername', 
         checkGetByUsername,
-        [validate, userController.authenticateAdmin, userController.getByUsername])
+        [validate, utilsController.authenticateAdmin, userController.getByUsername])
 
     router.get(
         '/getByEmail',
         checkGetByEmail,
-        [validate, userController.authenticateAdmin, userController.getByEmail])
+        [validate, utilsController.authenticateAdmin, userController.getByEmail])
     
     router.get(
         '/getById',
         checkGetById,
-        [validate, userController.authenticateAdmin, userController.getById])
+        [validate, utilsController.authenticateAdmin, userController.getById])
         
     router.get(
         '/getAll',
         checkGetAll,
-        [validate, userController.authenticateAdmin, userController.getAll])
+        [validate, utilsController.authenticateAdmin, userController.getAll])
     
     router.get(
         '/count',
         checkCount,
-        [validate, userController.authenticateAdmin, userController.count])
+        [validate, utilsController.authenticateAdmin, userController.count])
     
     router.put(
         '/updateUser',
         checkUpdateUser,
-        [validate, userController.authenticateAdmin, userController.updateUser])
+        [validate, utilsController.authenticateAdmin, userController.updateUser])
 
 	router.put(
         '/updateUserById', 
         checkUpdateUserById,
-        [validate, userController.authenticateAdmin, userController.updateUserById])
+        [validate, utilsController.authenticateAdmin, userController.updateUserById])
     
     router.put(
         '/setAdmin',
         checkSetAdmin,
-        [validate, userController.authenticateAdmin, userController.setAdmin])
+        [validate, utilsController.authenticateAdmin, userController.setAdmin])
 
     app.use('/user', router)
 }

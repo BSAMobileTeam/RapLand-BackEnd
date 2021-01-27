@@ -6,58 +6,6 @@ const bcrypt = require('bcrypt')
 
 const {API_KEY, ACCESS_TOKEN_SECRET} = process.env
 
-const authenticateToken = (req, res, next) => {
-    try {
-        const authHeader = req.headers['authorization']
-        const token = authHeader && authHeader.split(' ')[1]
-        if(token === null) return res.sendStatus(401)
-    
-        jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
-            if(err) return res.sendStatus(403)
-            const user = await User.findByPk(id)
-            if (user !== null) {
-                req.headers.user = user
-                next()
-            } else {
-                res.sendStatus(403)
-            }
-        })
-    } catch (error) {
-        res.sendStatus(500)
-    }
-}
-
-const authenticateAdmin = (req, res, next) => {
-    try {
-        const authHeader = req.headers['authorization']
-        const token = authHeader && authHeader.split(' ')[1]
-                
-        if(token === null) {
-            return res.status(401).send("You must be connected as an administrator to access this ressource.")
-        }
-        jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
-            if (err) {
-                return res.status(403).send("You can't access this method because you are not administrator.")
-            }
-            const user = await User.findByPk(id)
-            if (user === null) {
-                return res.status(403).send("You can't access this method because you are not administrator.")
-            } else if (user.admin === true) {
-                req.headers.user = user
-                next()
-            } else {
-                return res.status(403).send("You can't access this method because you are not administrator.")
-            }
-        })
-    } catch (error) {
-        return res.sendStatus(500)
-    }
-}
-
-function generateAccessToken(user) {
-    return jwt.sign(user, ACCESS_TOKEN_SECRET)
-}
-
 const login = async (req, res) => {
     try {
         let user = null
@@ -83,6 +31,10 @@ const login = async (req, res) => {
     } catch (error) {
         return res.sendStatus(500)
     }
+}
+
+function generateAccessToken(user) {
+    return jwt.sign(user, ACCESS_TOKEN_SECRET)
 }
 
 const logout = async (req, res) => {
@@ -269,8 +221,6 @@ const getUser = async (req, res) => {
 }
 
 module.exports = {
-    authenticateAdmin,
-    authenticateToken,
     addScoreById,
     addScore,
     setAdmin,

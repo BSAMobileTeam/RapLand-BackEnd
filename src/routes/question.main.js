@@ -11,29 +11,30 @@ const { checkDeleteQuestion } = require('../validators/question.index')
 
 module.exports = app => {
     const mainController = require('../controllers/question.main')
+    const utilsController = require('../controllers/utils')
     const router = require('express').Router()
     
     router.post(
         '/create',
         checkCreateQuestion,
-        [validate, mainController.authenticateAdmin, mainController.create]
+        [validate, utilsController.authenticateAdmin, mainController.create]
     )
     
     router.post(
         '/createWithArray',
         checkCreateQuestionWithArray,
-        [validate, mainController.authenticateAdmin, mainController.createWithArray])
+        [validate, utilsController.authenticateAdmin, mainController.createWithArray])
     
     router.put(
         '/update',
         checkUpdateQuestion,
-        [validate, mainController.authenticateAdmin, mainController.updateQuestion]
+        [validate, utilsController.authenticateAdmin, mainController.updateQuestion]
     )
 
     router.delete(
         '/delete',
         checkDeleteQuestion,
-        [validate, mainController.authenticateAdmin, mainController.deleteById]
+        [validate, utilsController.authenticateAdmin, mainController.deleteById]
     )
 
     router.get(
