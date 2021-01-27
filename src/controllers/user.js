@@ -64,7 +64,7 @@ const updateUserById = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const user = await User.findByPk(req.id)
+        const user = req.headers.user
         await user.update(req.body, {
             where: { id: req.id }
         })
