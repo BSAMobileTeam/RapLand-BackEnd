@@ -2,6 +2,8 @@ const User = require('../models/user')
 const Question = require('../models/question.main')
 const CommunityQuestion = require('../models/question.community')
 
+const jwt = require('jsonwebtoken')
+
 const {ACCESS_TOKEN_SECRET} = process.env
 
 const authenticateToken = (req, res, next) => {
