@@ -4,6 +4,11 @@ const checkGetUser = [
     header('authorization').exists()
 ]
 
+const checkAddScoreById = [
+    header('authorization').exists(),
+    query('score').isNumeric({min: 1}), //max score ?
+]
+
 const checkAddScore = [
     header('authorization').exists(),
     query('id').isUUID(4).notEmpty(),
@@ -82,6 +87,7 @@ const checkCount = [
 module.exports = {
     checkGetUser,
     checkAddScore,
+    checkAddScoreById,
     checkRegister,
     checkLogin,
     checkDeleteById,

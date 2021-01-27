@@ -10,7 +10,7 @@ const authenticateToken = (req, res, next) => {
     try {
         const authHeader = req.headers['authorization']
         const token = authHeader && authHeader.split(' ')[1]
-        if(token == null) return res.sendStatus(401)
+        if(token === null) return res.sendStatus(401)
     
         jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, id) => {
             if(err) return res.sendStatus(403)
@@ -98,7 +98,7 @@ const updateUserById = async (req, res) => {
     try {
         const user = await User.findByPk(req.query.id)
         if (user === null) {
-            return res.status(404).send(`This user ID doesn't exists : ${req.query.id}`)
+            return res.status(404).send(`This user ID doesn't exist : ${req.query.id}`)
         }
         return res.status(200).json(
             await user.update(req.body, {
@@ -122,10 +122,9 @@ const updateUser = async (req, res) => {
     }
 }
 
-const addScore = async (req, res) => {
+const addScoreById = async (req, res) => {
     try {
         const user = await User.findByPk(req.query.id)
-        console.log(user.score + req.query.score)
         await user.update({ score: parseInt(parseInt(user.score) + parseInt(req.query.score)) }, {
             where: { id: req.query.id }
         })
@@ -135,20 +134,31 @@ const addScore = async (req, res) => {
     }
 }
 
+const addScore = async (req, res) => {
+    try {
+        await req.headers.user.update({ score: parseInt(parseInt(req.headers.user.score) + parseInt(req.query.score)) }, {
+            where: { id: req.headers.user.id }
+        })
+        return res.status(200).send(`${req.headers.user.username} new score : ${req.headers.user.score}`)
+    } catch (error) {
+        return res.sendStatus(500)
+    }
+}
+
 /*
-*   Warning ! An admin qan remove admin rights to another admin
+*   Warning ! An admin can remove admin rights to another admin
 */
 const setAdmin = async (req, res) => {
     try {
         const user = await User.findByPk(req.query.id)
         if (user === null) {
-            return res.status(404).send(`This user ID doesn't exists : ${req.query.id}`)
+            return res.status(404).send(`This user ID doesn't exist : ${req.query.id}`)
         }
         req.query.isAdmin = req.query.isAdmin === "true" ? true : false
         await user.update(req.body, {
             where: { admin: req.query.isAdmin}
         })        
-        return res.status(200).send(`${user.username} is ${req.query.isAdmin === true ? "now an administrator" : "not an administrator anymore"}.`)
+        return res.status(200).send(`${user.username} is ${req.query.isAdmin === true ? "now administrator" : "no longer administrator"}.`)
     } catch (error) {
         res.sendStatus(500)
     }
@@ -156,7 +166,7 @@ const setAdmin = async (req, res) => {
 
 const count = async (req, res) => {
     try {
-       return res.status(200).send((await User.count()).toString())
+        return res.status(200).send((await User.count()).toString())
     } catch (error) {
         return res.sendStatus(500)
     }
@@ -188,7 +198,7 @@ const deleteById = async (req, res) => {
     try {
         const userToDelete = await User.findByPk(req.query.id)
         if (userToDelete === null) {
-            return res.status(404).send(`This user ID doesn't exists : ${req.query.id}`)
+            return res.status(404).send(`This user ID doesn't exist : ${req.query.id}`)
         }
         await userToDelete.destroy()
         return res.status(200).send('Deleted')
@@ -214,7 +224,7 @@ const getById = async (req, res) => {
             where: { id: req.query.id },
             attributes: { exclude: ['password'] }
         })
-        return user !== null ? res.status(200).json(user) : res.status(404).send("This user ID doesn't exists.")
+        return user !== null ? res.status(200).json(user) : res.status(404).send("This user ID doesn't exist.")
     } catch (error) {
         return res.sendStatus(404)
     }
@@ -226,7 +236,7 @@ const getByUsername = async (req, res) => {
             where: { username: req.query.username },
             attributes: { exclude: ['password'] }
         })
-        return user !== null ? res.status(200).json(user) : res.status(404).send("This username doesn't exists.")
+        return user !== null ? res.status(200).json(user) : res.status(404).send("This username doesn't exist.")
     } catch (error) {
         return res.sendStatus(500)
     }
@@ -238,7 +248,7 @@ const getByEmail = async (req, res) => {
             where: { email: req.query.email },
             attributes: { exclude: ['password'] }
         })
-        return user !== null ? res.status(200).json(user) : res.status(404).send("This email doesn't exists.")
+        return user !== null ? res.status(200).json(user) : res.status(404).send("This email doesn't exist.")
     } catch (error) {
         return res.sendStatus(404)
     }
@@ -247,7 +257,7 @@ const getByEmail = async (req, res) => {
 const getUser = async (req, res) => {
     try {
         if (req.headers.user === null) {
-            return res.status(404).send("This user doesn't exists.")
+            return res.status(404).send("This user doesn't exist.")
         }
         const user = req.headers.user
         delete user.dataValues.password
@@ -261,6 +271,7 @@ const getUser = async (req, res) => {
 module.exports = {
     authenticateAdmin,
     authenticateToken,
+    addScoreById,
     addScore,
     setAdmin,
     count,

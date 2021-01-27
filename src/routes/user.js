@@ -48,6 +48,11 @@ module.exports = app => {
         '/logout',
         [validate, userController.logout])
     
+    router.post(
+        '/addScoreById',
+        checkAddScoreById,
+        [validate, userController.authenticateAdmin, userController.addScoreById])
+
     router.delete(
         '/deleteById',
         checkDeleteById, 
