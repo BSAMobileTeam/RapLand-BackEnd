@@ -130,7 +130,8 @@ const create = async (req, res) => {
         const newUser = await User.create({
             ...req.body,
             password: await bcrypt.hash(req.body.password, 10),
-            admin: req.query.apiKey && req.query.apiKey === API_KEY ? req.body.admin : false
+            admin: req.query.apiKey && req.query.apiKey === API_KEY ? req.body.admin : false,
+		score: 0
         })
         return res.status(201).json({
             accessToken: generateAccessToken(newUser.id)

@@ -2,6 +2,7 @@ const { validate } = require('../validators/index');
 const {
     checkGetUser,
     checkAddScore,
+	checkAddScoreById,
     checkRegister,
     checkLogin,
     checkDeleteById,
