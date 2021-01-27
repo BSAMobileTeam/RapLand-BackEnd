@@ -6,12 +6,12 @@ const checkGetUser = [
 
 const checkAddScoreById = [
     header('authorization').exists(),
+    query('id').isUUID(4).notEmpty(),
     query('score').isNumeric({min: 1}), //max score ?
 ]
 
 const checkAddScore = [
     header('authorization').exists(),
-    query('id').isUUID(4).notEmpty(),
     query('score').isNumeric({min: 1}), //max score ?
 ]
 
