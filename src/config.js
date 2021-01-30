@@ -35,6 +35,14 @@ const checkEnvVariables = () => {
         logger.error("There is no variable \"GET_MIXED_ARRAY_MAX_EXECUTION_TIME_MS\" in .env (it must be a strictly positive number)")
         error = true
     }
+    if (keys.includes('VERIFY_EMAIL_API_KEY') === false || process.env["VERIFY_EMAIL_API_KEY"] === "") {
+        logger.error("There is no variable \"VERIFY_EMAIL_API_KEY\" in .env (it must be a non empty string)")
+        error = true
+    }
+    if (keys.includes('VERIFY_EMAIL_ENDPOINT') === false || process.env["VERIFY_EMAIL_ENDPOINT"] === "") {
+        logger.error("There is no variable \"VERIFY_EMAIL_ENDPOINT\" in .env (it must be a non empty string)")
+        error = true
+    }
     if (error === true) {
         logger.fatal("Error in .env (cf README.md) file, exiting program with exit code 1.")
         process.exit(1)

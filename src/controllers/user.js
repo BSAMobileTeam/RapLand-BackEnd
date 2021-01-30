@@ -4,7 +4,17 @@ const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 
-const {API_KEY, ACCESS_TOKEN_SECRET} = process.env
+const {
+    API_KEY,
+    ACCESS_TOKEN_SECRET,
+    VERIFY_EMAIL_API_KEY,
+    VERIFY_EMAIL_ENDPOINT
+} = process.env
+
+const {
+    emailStatusEnum,
+    getEmailStatus
+} = require('../utils')
 
 const login = async (req, res) => {
     try {
@@ -127,6 +137,13 @@ const count = async (req, res) => {
 // Password should be sent encrypted by frontend
 const create = async (req, res) => {
     try {
+        const emailStatus = await getEmailStatus(req.body.email)
+        if (emailStatus === emailStatusEnum.INVALID) {
+            return res.status(422).send("This email is not valid")
+        }
+        if (emailStatus === emailStatusEnum.UNKNOWN) {
+            return res.status(422).send("We can't check this email domain name. Try to use a public one.")
+        }
         const newUser = await User.create({
             ...req.body,
             password: await bcrypt.hash(req.body.password, 10),

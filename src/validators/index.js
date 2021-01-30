@@ -1,5 +1,6 @@
 
 const { validationResult } = require('express-validator')
+const logger = require('../logger')
 
 /**
  * Validates the HTTP request data.
@@ -18,8 +19,7 @@ const validate = (req, res, next) => {
         next()
     }
     else {
-        // console.log(errors.array())
-    //   logger.warn(JSON.stringify(errors.array()))
+        logger.warn(JSON.stringify(errors.array()))
         res.status(422).json({
             errors: errors.array()
         })
