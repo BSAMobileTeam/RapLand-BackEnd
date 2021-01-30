@@ -1,6 +1,7 @@
 const { body, query, header } = require('express-validator');
 
 const {
+    games,
     checkGame,
     checkGameMode,
     checkGameModeForArray,
@@ -55,7 +56,8 @@ const checkUpdateQuestion = [
 ]
 
 const checkGetMixedQuestionArray = [
-    query('length').isNumeric().isLength({min: 1, max: 50}).optional()
+    query('length').isNumeric().isLength({min: 1, max: 50}).optional(),
+    query('game').custom(value => typeof value === 'string' && games.includes(value)).withMessage(`"game" must be ${games.join(" or ")}`)
 ]
 
 module.exports = {

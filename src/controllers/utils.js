@@ -81,7 +81,7 @@ const exportCommunity = async (req, res) => {
         }), (err) => {
             res.end()
         })
-    } catch (error) {
+    } catch (error) {﻿
         return res.sendStatus(500)
     }
 }

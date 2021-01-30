@@ -165,6 +165,10 @@ const checkDeleteQuestion = [
 
 
 module.exports = {
+    questionTypes,
+    questionMediaTypes,
+    games,
+    gameModes,
     checkGame,
     checkGameMode,
     checkGameModeForArray,

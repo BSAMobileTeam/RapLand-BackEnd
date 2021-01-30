@@ -37,11 +37,11 @@ const getAll = async (req, res) => {
 
 const getMixedArray = async (req, res) => {
     try {
-        const questions = await Question.findAll()
+        const questions = await (await Question.findAll()).filter(question => question.game.includes(req.query.game))
         if (questions.length <= 0) {
-            return res.send(404).send("There are no available questions")
+            return res.status(404).send("There are no available questions")
         }
-        const length = req.query.length <= questions.length ? req.query.length : DEFAULT_MIXED_ARRAY_LENGTH
+        const length = req.query.length <= questions.length ? req.query.length : questions.length
         const mixedArray = []
         const startDate = Date.now()
 
