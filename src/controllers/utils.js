@@ -54,9 +54,9 @@ const authenticateAdmin = (req, res, next) => {
     }
 }
 
-const checkApiKey = async (req, res) => {
+const checkApiKey = async (req, res, next) => {
     try {
-        if (req.headers.apiKey === API_KEY) {
+        if (req.query.apiKey === API_KEY) {
             next()
         } else {
             return res.status(403).send("An API KEY is required to access this method.")
