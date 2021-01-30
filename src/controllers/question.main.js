@@ -20,7 +20,7 @@ const create = async (req, res) => {
 const getById = async (req, res) => {
     try {
         const question = await Question.findByPk(req.query.id)
-        return question !== null ? res.status(200).json(question) : res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
+        return question !== null ? res.status(200).json(question) : res.status(404).send(`This question ID doesn't exist : ${req.query.id}`)
     } catch (error) {
         return res.sendStatus(500)
     }
@@ -84,7 +84,7 @@ const deleteById = async (req, res) => {
     try {
         const question = await Question.findByPk(req.query.id)
         if (question === null) {
-            return res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
+            return res.status(404).send(`This question ID doesn't exist : ${req.query.id}`)
         }
         await question.destroy()
         return res.status(200).send('Deleted')
@@ -105,7 +105,7 @@ const updateQuestion = async (req, res) => {
     try {
         const question = await Question.findByPk(req.query.id)
         if (question === null) {
-            return res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
+            return res.status(404).send(`This question ID doesn't exist : ${req.query.id}`)
         }
         return res.status(200).json(
             await question.update(req.body, {
