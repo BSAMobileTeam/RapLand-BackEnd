@@ -69,8 +69,8 @@ const checkApiKey = async (req, res, next) => {
 
 const exportMain = async (req, res) => {
     try {
-        const questions = req.query.withId ? await Question.findAll() : await Question.findAll({attributes: { exclude: ['id'] }})
-        const users = req.query.withId ? await User.findAll() : await User.findAll({attributes: { exclude: ['id'] }})
+        const questions = req.query.withId === true ? await Question.findAll() : await Question.findAll({attributes: { exclude: ['id'] }})
+        const users = req.query.withId === true ? await User.findAll() : await User.findAll({attributes: { exclude: ['id'] }})
         res.setHeader('Content-disposition', `attachment; filename= mainDatabaseExport-${new Date()}.json`)
         res.setHeader('Content-type', 'application/json')
         return res.write(JSON.stringify({
