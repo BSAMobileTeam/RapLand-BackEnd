@@ -47,7 +47,7 @@ const getMixedArray = async (req, res) => {
 
         while (mixedArray.length < length) {
             if (Date.now() - startDate >= GET_MIXED_ARRAY_MAX_EXECUTION_TIME_MS) {
-                return res.status(504).send(`Can't generate a mixed array in more than ${GET_MIXED_ARRAY_MAX_EXECUTION_TIME_MS} milliseconds. Try with a smaller size.`)
+                return res.status(504).send(`Can't generate a mixed array in less than ${GET_MIXED_ARRAY_MAX_EXECUTION_TIME_MS} milliseconds. Try with a smaller size.`)
             }
             const newQuestion = questions[Math.floor(Math.random() * questions.length)]
             if (mixedArray.includes(newQuestion) === false) {
