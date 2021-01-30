@@ -20,7 +20,7 @@ const create = async (req, res) => {
 const getById = async (req, res) => {
     try {
         const question = await Question.findByPk(req.query.id)
-        return question !== null ? res.status(200).json(question) : res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
+        return question !== null ? res.status(200).json(question) : res.status(404).send(`This question ID doesn't exist : ${req.query.id}`)
     } catch (error) {
         return res.sendStatus(500)
     }
@@ -47,7 +47,7 @@ const getMixedArray = async (req, res) => {
 
         while (mixedArray.length < length) {
             if (Date.now() - startDate >= GET_MIXED_ARRAY_MAX_EXECUTION_TIME_MS) {
-                return res.status(504).send(`Can't generate a mixed array in less than ${GET_MIXED_ARRAY_MAX_EXECUTION_TIME_MS} milliseconds. Try with a smaller size.`)
+                return res.status(504).send(`Can't generate a mixed array in more than ${GET_MIXED_ARRAY_MAX_EXECUTION_TIME_MS} milliseconds. Try with a smaller size.`)
             }
             const newQuestion = questions[Math.floor(Math.random() * questions.length)]
             if (mixedArray.includes(newQuestion) === false) {
@@ -84,7 +84,7 @@ const deleteById = async (req, res) => {
     try {
         const question = await Question.findByPk(req.query.id)
         if (question === null) {
-            return res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
+            return res.status(404).send(`This question ID doesn't exist : ${req.query.id}`)
         }
         await question.destroy()
         return res.status(200).send('Deleted')
@@ -105,7 +105,7 @@ const updateQuestion = async (req, res) => {
     try {
         const question = await Question.findByPk(req.query.id)
         if (question === null) {
-            return res.status(404).send(`This question ID doesn't exists : ${req.query.id}`)
+            return res.status(404).send(`This question ID doesn't exist : ${req.query.id}`)
         }
         return res.status(200).json(
             await question.update(req.body, {
