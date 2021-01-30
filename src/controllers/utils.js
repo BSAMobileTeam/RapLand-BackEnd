@@ -72,7 +72,9 @@ const exportMain = async (req, res) => {
         const questions = await Question.findAll({
             attributes: { exclude: ['id'] }
         })
-        const users = await User.findAll()
+        const users = await User.findAll({
+            attributes: { exclude: ['id'] }
+        })
         res.setHeader('Content-disposition', `attachment; filename= mainDatabaseExport-${new Date()}.json`)
         res.setHeader('Content-type', 'application/json')
         return res.write(JSON.stringify({
