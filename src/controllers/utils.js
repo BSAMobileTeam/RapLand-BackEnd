@@ -4,7 +4,7 @@ const CommunityQuestion = require('../models/question.community')
 
 const jwt = require('jsonwebtoken')
 
-const {ACCESS_TOKEN_SECRET} = process.env
+const {ACCESS_TOKEN_SECRET, API_KEY} = process.env
 
 const authenticateToken = (req, res, next) => {
     try {
@@ -54,9 +54,24 @@ const authenticateAdmin = (req, res, next) => {
     }
 }
 
+const checkApiKey = async (req, res) => {
+    try {
+        if (req.headers.apiKey === API_KEY) {
+            next()
+        } else {
+            return res.status(403).send("An API KEY is required to access this method.")
+        }
+
+    } catch (error) {
+        return res.sendStatus(500)
+    }
+}
+
 const exportMain = async (req, res) => {
     try {
-        const questions = await Question.findAll()
+        const questions = await Question.findAll({
+            attributes: { exclude: ['id'] }
+        })
         const users = await User.findAll()
         res.setHeader('Content-disposition', `attachment; filename= mainDatabaseExport-${new Date()}.json`)
         res.setHeader('Content-type', 'application/json')
@@ -73,15 +88,17 @@ const exportMain = async (req, res) => {
 
 const exportCommunity = async (req, res) => {
     try {
-        const communityQuestions = await CommunityQuestion.findAll()
+        const communityQuestions = await CommunityQuestion.findAll({
+            attributes: { exclude: ['id'] }
+        })
         res.setHeader('Content-disposition', `attachment; filename= communityDatabaseExport-${new Date()}.json`)
         res.setHeader('Content-type', 'application/json')
         return res.write(JSON.stringify({
-            communityQuestions: questions,
+            communityQuestions: communityQuestions,
         }), (err) => {
             res.end()
         })
-    } catch (error) {﻿
+    } catch (error) {
         return res.sendStatus(500)
     }
 }
@@ -89,6 +106,7 @@ const exportCommunity = async (req, res) => {
 module.exports = {
     authenticateToken,
     authenticateAdmin,
+    checkApiKey,
     exportMain,
     exportCommunity
 }

@@ -4,9 +4,9 @@ module.exports = app => {
     const router = require('express').Router()
     const utilsController = require('../controllers/utils')
 
-    router.get('/exportMain', utilsController.exportMain)
+    router.get('/exportMain', utilsController.checkApiKey, utilsController.exportMain)
 
-    router.get('/exportCommunity', utilsController.exportCommunity)
+    router.get('/exportCommunity', utilsController.checkApiKey, utilsController.exportCommunity)
 
     app.use('/utils', router)
 }
