@@ -69,8 +69,9 @@ const checkApiKey = async (req, res, next) => {
 
 const exportMain = async (req, res) => {
     try {
-        const questions = req.query.withId === true ? await Question.findAll() : await Question.findAll({attributes: { exclude: ['id'] }})
-        const users = req.query.withId === true ? await User.findAll() : await User.findAll({attributes: { exclude: ['id'] }})
+	console.log(req.query.withId)
+        const questions = req.query.withId == 'true' ? await Question.findAll() : await Question.findAll({attributes: { exclude: ['id'] }})
+        const users = req.query.withId == 'true' ? await User.findAll() : await User.findAll({attributes: { exclude: ['id'] }})
         res.setHeader('Content-disposition', `attachment; filename= mainDatabaseExport-${new Date()}.json`)
         res.setHeader('Content-type', 'application/json')
         return res.write(JSON.stringify({
@@ -86,7 +87,7 @@ const exportMain = async (req, res) => {
 
 const exportCommunity = async (req, res) => {
     try {
-        const communityQuestions = req.query.withId ? await CommunityQuestion.findAll() : await CommunityQuestion.findAll({attributes: { exclude: ['id'] }})
+        const communityQuestions = req.query.withId == 'true' ? await CommunityQuestion.findAll() : await CommunityQuestion.findAll({attributes: { exclude: ['id'] }})
         res.setHeader('Content-disposition', `attachment; filename= communityDatabaseExport-${new Date()}.json`)
         res.setHeader('Content-type', 'application/json')
         return res.write(JSON.stringify({
